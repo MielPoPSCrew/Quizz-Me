@@ -4,59 +4,59 @@
     {
       "question": "Comment s'appelle le leader du groupe NOFX ?",
       "choices": ["Big Mike", "Fat Mike", "Stupid Mike"],
-      "answer": 2
+      "answer": 1
     },
     {
       "question": "De quel morceau des Twisted Sister sont extraites les paroles \"We're right, yeah / We're free, yeah / We'll fight, yeah / You'll see, yeah\" ?",
       "choices": ["Come Out And Play", "I Wanna Rock", "We're Not Gonna Take It"],
-      "answer": 3,
+      "answer": 2,
       "info": "Le morceau figure sur l'album \"Stay Hungry\", sorti en 1984"
     },
     {
       "question": "Quel chiffre est évoqué par Iron Maiden dans le morceau \"The Number of the Beast\" ?",
       "choices": ["0", "666", "3.14"],
-      "answer": 2,
+      "answer": 1,
       "info": "Le morceau figure sur l'album du même nom, sorti en 1982"
     },
     {
       "question": "Parmi ces musiciens, lequel ne fait pas parti du club des 27 ?",
       "choices": ["Kurt Cobain de Nirvana", "Jimi Hendrix", "John Bonham de Led Zepplin"],
-      "answer": 3
+      "answer": 2
     },
     {
       "question": "Quel plat asiatique est aussi un titre de System of a Down ?",
       "choices": ["Sushi", "Yakitori", "Chop Suey"],
-      "answer": 3,
+      "answer": 2,
       "info": "Le morceau figure sur l'album Toxicity sorti en 2001"
     },
     {
       "question": "Quel morceau a été élu \"Riff du siècle\" par les auditeurs de BBC Radio 2 ?",
       "choices": ["Smoke on the Water, de Deep Purple", "War Pigs, de Black Sabbath", "Whole Lotta Love, de Led Zepplin"],
-      "answer": 3,
+      "answer": 2,
       "info": "Il figure devant Sweet Child O' Mine des Guns N'Roses et Back in Black d'AC/DC"
     },
     {
       "question": "Quel groupe a invité Lemmy Kilmister à conduire un camion dans l'un des ses clips ?",
       "choices": ["Airbourn, pour le clip de Running Wild", "AC/DC, pour le clip de Highway to Hell", "Metallica, pour le clip de Motorbreath"],
-      "answer": 1,
+      "answer": 0,
       "info": "Il figure devant Sweet Child O' Mine des Guns N'Roses et Back in Black d'AC/DC"
     },
     {
       "question": "En hommage à quel groupe punk Motörhead a-t-il enregistré un morceau ?",
       "choices": ["Les Sex Pistols", "Les Ramones", "The Damned"],
-      "answer": 2,
+      "answer": 1,
       "info": "Le morceau R.A.M.O.N.E.S. figure sur l'album 1916 sorti en 1991"
     },
     {
       "question": "Lequel de ces albums n'a pas été enregistré par Deep Purple ?",
       "choices": ["Burn", "In Rock", "Paranoid"],
-      "answer": 3,
+      "answer": 2,
       "info": "Il s'agit du premier album de Black Sabbath, sorti en 1970"
     },
     {
       "question": "De combien de musiciens est composé le groupe AC/DC ?",
       "choices": ["2", "5", "18"],
-      "answer": 2
+      "answer": 1
     }
   ]
 }
