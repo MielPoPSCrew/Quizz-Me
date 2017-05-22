@@ -25,7 +25,8 @@ router.get('/', (req, res) => {
                 quiz.name = rawQuiz.name;
 
             });
-
+            game.name = rawGame.name;
+            game.id = rawGame._id;
             game.quiz = quiz;
             game.pending_users = rawGame.pending_users;
             game.nb_max_user = rawGame.nb_max_user;
