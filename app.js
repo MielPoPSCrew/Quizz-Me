@@ -1,13 +1,16 @@
-// set execution mode
-const MODE = "debug";
-
 // base modules to import
-const express = require('express');
-const fs = require('fs');
-const bodyparser = require('body-parser');
-const nunjucks = require('nunjucks');
+const MODE         = 'debug',
+      express      = require('express'),
+      fs           = require('fs'),
+      bodyparser   = require('body-parser'),
+      nunjucks     = require('nunjucks'),
+      cookieParser = require('cookie-parser'),
+      Hashids      = require('hashids'),
+      _            = require('lodash');
 
 let app = express();
+
+app.use(cookieParser());
 
 // setup MongoDB connection
 global.DB = require('monk')('localhost/quizme');
@@ -23,6 +26,29 @@ if(MODE == 'debug'){
         }
     }).catch(console.error);
 }
+/**
+ * Set the user ID or renew it via cookie
+ */
+app.use((req, res, next) => {
+    const hashids = new Hashids();
+    let username;
+
+    if (_.isEmpty(req.cookies) || _.isEmpty(req.cookies.username)) {
+        username = 'guest_' + hashids.encode(Date.now().valueOf());
+
+        DB.get('users').find({username}).then((user) => {
+            if (_.isEmpty(user)) {
+                DB.get('users').insert({username, "created": Date.now().valueOf()});
+            }
+        });
+    } else {
+        username = req.cookies.username;
+    }
+
+    res.cookie('username', username, { maxAge: 60 * 60 * 1000, httpOnly: true });
+
+    next();
+});
 
 nunjucks.configure('views', {express: app});
 app.set('view engine', 'njk');
