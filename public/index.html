@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+        <link rel="stylesheet" href="css/style.css">
+
+        <script src="js/main.js"></script>
+
+        <title>Home</title>
+    </head>
+    <body>
+        <main>
+            <!--menu left-->
+            <ul id="menu-left" class="side-nav">
+                <li class="menu-header">
+                    <img src="images/polytech_logo.jpg" alt="Polytech logo">
+                    <div class="logo-label">Projet Eolienne</div>
+                </li>
+                <li>
+                    <div class="divider"></div>
+                </li>
+                <li><a href="home" class="page-link"><i class="fa fa-home"></i>Home</a></li>
+                <li><a href="data" class="page-link"><i class="fa fa-tasks"></i>Données</a></li>
+                <li><a href="charts" class="page-link"><i class="fa fa-area-chart"></i>Graphs</a></li>
+                <li><a href="controller" class="page-link"><i class="fa fa-dot-circle-o"></i>Contrôleur</a></li>
+                <li><a href="download" class="page-link"><i class="fa fa-cloud-download"></i>Export</a></li>
+                <li><a href="log" class="page-link"><i class="fa fa-code"></i>Log</a></li>
+            </ul>
+            <a href="#" data-activates="menu-left" id="toggle-menu-left" class="button-collapse">
+                <i class="fa fa-bars fa-2x" aria-hidden="true"></i>
+            </a>
+
+            <!--content-->
+            <!-- HOME PAGE -->
+            <div class="page container" data-url="home" data-title="Éolienne - Home">
+                <h2 class="container-title">Home</h2>
+            </div>
+        </main>
+
+        <!--footer-->
+        <footer class="page-footer">
+            <div class="container">
+                <div class="row">
+                    <div class="col l6 s12">
+                        <!-- <h5 class="white-text">Company Bio</h5> -->
+                        <p class="grey-text text-lighten-4">
+                            Projet Eolienne
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-copyright">
+                <div class="container">
+                    <i class="fa fa-copyright" aria-hidden="true"></i>
+                    Tous droits réservés
+                </div>
+            </div>
+        </footer>
+
+        <!-- Modal popup for notification purpose -->
+        <div id="modal-popup" class="modal">
+            <div class="modal-content">
+                <h4 class="title">Modal Header</h4>
+                <p class="content">A bunch of text</p>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-action modal-close waves-effect waves-green btn-flat">OK</button>
+            </div>
+        </div>
+    </body>
+</html>

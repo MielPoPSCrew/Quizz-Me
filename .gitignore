@@ -1,2 +1,8 @@
 .idea/
 node_modules/
+public/sass/vendors/
+!public/sass/vendors/materialize/components/_variables.scss
+public/css/style.css
+public/fonts/
+public/js/main.js*
+public/js/vendor.js*
