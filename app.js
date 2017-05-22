@@ -45,7 +45,7 @@ app.use((req, res, next) => {
         username = req.cookies.username;
     }
 
-    res.cookie('username', username, { maxAge: 60 * 60 * 1000, httpOnly: true });
+    res.cookie('username', username, { maxAge: 60 * 60 * 24 * 7 * 1000, httpOnly: true }); // One week time expiration
 
     next();
 });
