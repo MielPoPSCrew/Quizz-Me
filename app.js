@@ -10,16 +10,16 @@ const nunjucks = require('nunjucks');
 let app = express();
 
 // setup MongoDB connection
-global.DB = require('monk')('localhost/questions_game');
+global.DB = require('monk')('localhost/quizme');
 
 // import test scripts if we're in debug
 if(MODE == 'debug'){
     let rock_script = JSON.parse(fs.readFileSync('samples/rock_sample.json','utf-8'));
     let rock_script_name = rock_script.name;
 
-    DB.get('questions').find({name: rock_script_name}).then((script) => {
+    DB.get('quiz').find({name: rock_script_name}).then((script) => {
         if(script.length === 0){
-            DB.get('questions').insert(rock_script);
+            DB.get('quiz').insert(rock_script);
         }
     }).catch(console.error);
 }
@@ -30,6 +30,6 @@ app.use(bodyparser.urlencoded({
     extended: false
 }));
 app.use(express.static('public'));
-app.use(require('./routes/'));
+app.use(require('./routes'));
 
 app.listen(8737);
