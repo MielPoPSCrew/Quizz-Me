@@ -1,4 +1,4 @@
-{% extends 'templates/layout.njk' %}
+{% extends '../templates/layout.njk' %}
 
 {% set game = {name : "Ma première game", nb_players : 5, quiz : "Vais-je avoir mon année ?"} %}
 {% set question = {label: "Qu'est-ce qui est rond et marron ?", answers: [{id : 0, text: "Un marron !"}, {id : 1, text: "Euh, un rond marron ?"}, {id : 2, text: "C'est pas faux."} ]} %}
@@ -19,16 +19,17 @@
             <h1 class="content-header">Quiz : {{ game.quiz }}</h1>
 
             <div class="col s12">
-                {% include 'game/question.njk'%}
+                {% include 'games/game/question.njk'%}
             </div>
 
             <div class="col s12">
-                {% include 'game/answers.njk'%}
+                {% include 'games/game/answers.njk'%}
+
             </div>
         </div>
 
         <div class="col s4">
-            {% include 'game/players.njk'%}
+            {% include 'games/game/players.njk'%}
         </div>
 
     </div>
