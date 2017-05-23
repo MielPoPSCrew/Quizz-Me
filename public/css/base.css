@@ -1,11 +1,11 @@
 /*** Global classes
 ---------------------------------------------------- */
-.content-header{
+.content-header {
     margin-bottom: 0.5em;
     font-size: 1.8em;
 }
 
-.content-block{
+.content-block {
     padding: 0.8rem;
     background-color: #FCFCFC;
     border : 1px solid #F0F0F0;
@@ -15,13 +15,14 @@
 .action-button {
     margin-top: 2em;
 }
+
 /*** Homepage stats
 ---------------------------------------------------- */
-.stats-value img{
+.stats-value img {
     vertical-align: middle;
 }
 
-.stats-value p{
+.stats-value p {
     font-size: 1.7em;
     margin-bottom: 0;
 }
@@ -46,6 +47,10 @@ nav #nav-mobile {
 nav .brand-logo {
   margin-left: 15%
 }
+
+
+/*** Footer
+---------------------------------------------------- */
 
 /*
 body {

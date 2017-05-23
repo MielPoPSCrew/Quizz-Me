@@ -1,0 +1,35 @@
+{% extends 'templates/layout.njk' %}
+
+{% set game = {name : "Ma première game", nb_players : 5, quiz : "Vais-je avoir mon année ?"} %}
+{% set question = {label: "Qu'est-ce qui est rond et marron ?", answers: [{id : 0, text: "Un marron !"}, {id : 1, text: "Euh, un rond marron ?"}, {id : 2, text: "C'est pas faux."} ]} %}
+{% set players = [{name: "Léo", pts: 5}, {name: "Thomas", pts: 3}, {name: "Steve", pts: 2}, { name: "Romain", pts: 1}, { name: "Clément", pts: 0}] %}
+
+{% block scripts %}
+    <script type="text/javascript" src="/js/games/games.play.client.js"></script>
+{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="/css/game.css"/>
+{% endblock %}
+
+{% block main %}
+    <div class="row game">
+
+        <div class="col s8">
+            <h1 class="content-header">Quiz : {{ game.quiz }}</h1>
+
+            <div class="col s12">
+                {% include 'game/question.njk'%}
+            </div>
+
+            <div class="col s12">
+                {% include 'game/answers.njk'%}
+            </div>
+        </div>
+
+        <div class="col s4">
+            {% include 'game/players.njk'%}
+        </div>
+
+    </div>
+{% endblock %}

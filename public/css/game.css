@@ -1,0 +1,159 @@
+.game {
+    margin-top: 30px;
+}
+
+/* TODO voir avec Clement pour changer le grey */
+.game .content-block {
+    background-color: #F5F5F5;
+}
+
+.game .content-header {
+    text-align: center;
+    margin : 25px 0 35px 0;
+}
+
+.game .question {
+    margin : 20px 0 30px 0;
+}
+
+.game .question .content-block {
+    height : 30%;
+    border-bottom: 0px;
+    position: relative;
+}
+
+.game .question .nbQuestion-title {
+    font-weight: bold;
+    font-size: 1.2em;
+}
+
+.game .question .progress {
+    margin-top: 0;
+}
+
+.game .question .content-block .loading {
+    padding-top: 10%;
+    text-align: center;
+}
+
+.game .question .content-block .loading .preloader-wrapper {
+    width: 80px;
+    height: 80px;
+}
+
+.game .question .content-block .loading .text-spinner {
+    font-size: 3.5em;
+}
+
+.game .question .content-block .question-text {
+    height: 250px;
+    display: table;
+    text-align: center;
+    width: 100%;
+}
+
+.game .question .content-block .question-text span {
+    display: table-cell;
+    vertical-align: middle;
+    font-size: 3em;
+}
+
+.game .question .content-block .timer {
+    float: right;
+    /* position: absolute; */
+    bottom: 0;
+    font-size: 2em;
+    margin-left: -35px;
+}
+
+
+
+.game .players {
+    height: 85%
+}
+
+.game .players .scores-title {
+    font-size: 2em;
+    text-align: center;
+    margin: 20px 0 30px 0;
+}
+
+.game .players .players-table {
+    margin: 10px;
+    padding: 0;
+}
+
+
+
+.game .players .players-table .player div {
+    font-size: 1.1em;
+    padding: 0;
+}
+.game .players .players-table .player {
+    margin: 3px;
+}
+
+.game .players .players-table .player .position .editable {
+    background-color: #263238;
+    padding: 3px 8px;
+    color : white;
+}
+
+.game .answers {
+    display: inline-block;
+    width: 100%;
+}
+
+.game .answers .nbAnswers {
+    margin : 10px 0 40px 0;
+    text-align: center;
+    font-size: 1.3em;
+}
+
+.game .answers .answer {
+    height : 250px;
+    padding: 0 20px;
+    border-radius: 1px;
+}
+
+.game .answers .answer .answer-content {
+    border-radius: 4px;
+    color : white;
+    height: 100%;
+    text-align: center;
+    opacity: 0.9;
+    cursor: pointer;
+}
+
+.game .answers .answer .answer-content:hover {
+    opacity: 0.7;
+    -webkit-transition: opacity .4s ease-in-out;
+    -moz-transition: opacity .4s ease-in-out;
+    -ms-transition: opacity .4s ease-in-out;
+    -o-transition: opacity .4s ease-in-out;
+    transition: opacity .4s ease-in-out;
+}
+
+.game .answers .ans1 .answer-content {
+    background-color: #2E74B5;
+}
+
+.game .answers .ans2 .answer-content {
+    background-color: #C45911;
+}
+
+.game .answers .ans3 .answer-content {
+    background-color: #538135;
+}
+
+.game .answers .answer .answer-content div {
+    display: table;
+    height: 100%;
+    width: 100%;
+}
+
+.game .answers .answer .answer-content div .text {
+    display: table-cell;
+    vertical-align: middle;
+    font-size: 2em;
+}
