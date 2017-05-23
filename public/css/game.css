@@ -42,3 +42,32 @@
 .game .question .content-block .loading .text-spinner {
     font-size: 3.5em;
 }
+
+.game .question .content-block .question-text {
+    height: 250px;
+    display: table;
+    text-align: center;
+    width: 100%;
+}
+
+.game .question .content-block .question-text span {
+    display: table-cell;
+    vertical-align: middle;
+    font-size: 3em;
+}
+
+.game .players .scores-title {
+    font-size: 2em;
+    text-align: center;
+    margin: 20px 0 30px 0;
+}
+
+.game .players .players-table {
+    margin: 10px;
+    padding: 0;
+}
+
+.game .players .players-table .player div {
+    font-size: 1.1em;
+    padding: 0;
+}

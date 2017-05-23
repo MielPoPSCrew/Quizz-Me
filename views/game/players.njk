@@ -1,3 +1,17 @@
 <div class="players content-block">
-    players
+    <div class="scores-title">Scores</div>
+
+    {% set players = [{name: "Léo", pts: 5}, {name: "Thomas", pts: 3}, {name: "Steve", pts: 2}, { name: "Romain", pts: 1}, { name: "Clément", pts: 0}] %}
+
+    <div class="col s12 players-table">
+    {% for player in players %}
+        <div class="col s12 player">
+            <div class="col s1">{{ loop.index }}.</div>
+            <div class="col s5">{{ player.name }}</div>
+            <div class="col s2">{{ player.pts }} pts</div>
+            <div class="col s2">...</div>
+        </div>
+    {% endfor %}
+    </div>
+
 </div>
