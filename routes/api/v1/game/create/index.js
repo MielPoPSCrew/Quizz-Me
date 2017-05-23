@@ -6,112 +6,119 @@ const   async = require('async');
 router.post('/', (req, res) => {
 
     let error   = {};
-    let success = {};
+    let success;
     let game    = {};
 
     async.waterfall([
 
-        // TODO : utiliser async ou mieux ?
+        // validation on creator_name
         (callback) => {
             if(_.isEmpty(req.query.creator_name)){
-                res.statusCode = 400;
                 error.message = 'creator_name is missing or empty';
-                res.json(error);
-                return;
+                callback(error);
+            } else {
+                callback(null);
             }
         },
-    ], res)
 
-    // validation on creator
-    /*if(_.isEmpty(req.query.creator_name)){
-        res.statusCode = 400;
-        error.message = 'creator_name is missing or empty';
-        res.json(error);
-        return;
-    }*/
+        // validation on quiz
+        (callback) => {
+            if(_.isEmpty(req.query.quiz_name)){
+                error.message = 'quiz_name is missing or empty';
+                callback(error);
+            } else {
+                callback(null);
+            }
+        },
 
-    // validation on quiz
-    if(_.isEmpty(req.query.quiz_name)){
-        res.statusCode = 400;
-        error.message = 'quiz_name is missing or empty';
-        res.json(error);
-        return;
-    }
+        // validation on is_private
+        (callback) => {
+            if(_.isEmpty(req.query.is_private)){
+                error.message = 'is_private is missing or empty';
+                callback(error);
+            } else {
+                callback(null);
+            }
+        },
 
-    // validation on is_private
-    if(_.isEmpty(req.query.is_private)){
-        res.statusCode = 400;
-        error.message = 'is_private is missing or empty';
-        res.json(error);
-        return;
-    }
+        // validation on nb max user
+        (callback) => {
+            if(_.isEmpty(req.query.nb_max_user)){
+                error.message = 'nb_max_user is missing or empty';
+                callback(error);
+            } else {
+                callback(null);
+            }
+        },
 
-    // validation on nb max user
-    if(_.isEmpty(req.query.nb_max_user)){
-        res.statusCode = 400;
-        error.message = 'nb_max_user is missing or empty';
-        res.json(error);
-        return;
-    }
+        // validation on name
+        (callback) => {
+            if(_.isEmpty(req.query.name)){
+                error.message = 'name is missing or empty';
+                callback(error);
+            } else {
+                callback(null);
+            }
+        },
 
-    if (req.is_private)
+        // creator exists ?
+        (callback) => {
+            DB.get('users').findOne({username: req.query.creator_name}).then((creator) => {
+                if(creator.length === 0) {
+                    error.message = "creator_name does not exist";
+                    callback(error);
+                } else {
+                    game.users = [creator._id];
+                    game.creator = creator._id;
+                    callback(null);
+                }
+            }).catch(console.error);
+        },
 
-    // validation on name
-    if(_.isEmpty(req.query.name)){
-        res.statusCode = 400;
-        error.message = 'name is missing or empty';
-        res.json(error);
-        return;
-    }
+        // quiz exists ?
+        (callback) => {
+            DB.get('quiz').findOne({name: req.query.quiz_name}).then((quiz) => {
+                if(quiz.length === 0) {
+                    error.message = "quiz_name does not exist";
+                    callback(error);
+                } else {
+                    game.id_quiz = quiz._id
+                    callback(null);
+                }
+            }).catch(console.error);
+        },
 
-    // creator exists ?
-    DB.get('users').findOne({username: req.query.creator_name}).then((creator) => {
-        if(creator.length === 0) {
-            res.statusCode = 400;
-            error.message = "creator_name does not exist";
-            res.json(error);
-            return;
-        } else {
-            game.users = [creator._id];
-            game.creator = creator._id;
+        // name of game already exists ?
+        (callback) => {
+            DB.get('games').findOne({name: req.query.name}).then((existing_game) => {
+                if(_.isEmpty(existing_game) || existing_game.length === 0) {
+                    let hashids = new Hashids("this is my salt");
+                    let h = hashids.encode(Date.now().valueOf());
+                    game.hash        = h;
+                    game.nb_max_user = _.toInteger(req.query.nb_max_user);
+                    game.name        = req.query.name;
+                    game.private     = req.query.is_private == 'true' ? true : false;
+                    game.started     = false;
+                    DB.get('games').insert(game).then((game_created) => {
+                        success = game_created._id;
+                        callback(null);
+                    }).catch(console.error);
+                } else {
+                    error.message = "game_name already exists";
+                    callback(error);
+                }
+            }).catch(console.error);
+        },
+
+        (callback) => {
+            res.json(success);
         }
-    }).catch(console.error);
 
-    // quiz exists ?
-    DB.get('quiz').findOne({name: req.query.quiz_name}).then((quiz) => {
-        if(quiz.length === 0) {
-            res.statusCode = 400;
-            error.message = "quiz_name does not exist";
-            res.json(error);
-            return;
-        } else {
-            game.id_quiz = quiz._id
-        }
-    }).catch(console.error);
-
-    // name of game already exists ?
-    DB.get('games').find({name: req.query.name}).then((game) => {
-        if(game.length === 0) {
-            let hashids = new Hashids("this is my salt");
-            let h = hashids.encode(Date.now().valueOf());
-            game.hash        = h;
-            game.nb_max_user = _.toInteger(req.query.nb_max_user);
-            game.name        = req.query.name;
-            game.private     = req.is_private == 'true' ? true : false;
-            game.started     = false;
-            console.log(game);
-
-            //DB.get('games').insert(game);
-        } else {
-            res.statusCode = 400;
-            error.message = "game_name already exists";
-            res.json(error);
-            return;
-        }
-    }).catch(console.error);
-
-    res.json(success);
-
+    ], function(error) {
+        console.log('ERROR: ' + error.message);
+        res.statusCode = _.isEmpty(error.statusCode) ? 400 : error.statusCode;
+        res.json(error);
+    })
 });
 
 module.exports = router;
