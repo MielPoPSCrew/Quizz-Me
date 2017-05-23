@@ -15,6 +15,15 @@ app.use(cookieParser());
 // setup MongoDB connection
 global.DB = require('monk')('localhost/quizme');
 
+// import default topics if they aren't in database
+let topics = ["Musique", "Cinéma", "Sciences / Technologies", "Litérature", "Culture Générale"];
+topics.forEach( (topic) => {
+    DB.get('topics').find({'name': topic}).then( (t) => {
+        if(_.isEmpty(t))
+            DB.get('topics').insert({"name": topic});
+    })
+});
+
 // import test scripts if we're in debug
 if(MODE == 'debug'){
     let rock_script = JSON.parse(fs.readFileSync('samples/rock_sample.json','utf-8'));
@@ -27,22 +36,14 @@ if(MODE == 'debug'){
     }).catch(console.error);
 }
 
-// import default themes if they aren't in database
-let themes = ["Musique", "Cinéma", "Sciences / Technologies", "Litérature", "Culture Générale"];
-themes.forEach( (theme) => {
-   DB.get('themes').find({'name': theme}).then( (t) => {
-       if(_.isEmpty(t))
-           DB.get('themes').insert({"name": theme});
-   })
-});
 /**
  * Set the user ID or renew it via cookie
  */
 app.use((req, res, next) => {
     const hashids = new Hashids();
     let username;
-
-    if (_.isEmpty(req.cookies) || _.isEmpty(req.cookies.username)) {
+    console.log(req.cookies.username);
+    if (_.isEmpty(req.cookies) || req.cookies.username === undefined) {
         username = 'guest_' + hashids.encode(Date.now().valueOf());
 
         DB.get('users').find({username}).then((user) => {
@@ -59,6 +60,7 @@ app.use((req, res, next) => {
                 });
             }
         });
+        req.cookies.username = username;
     } else {
         username = req.cookies.username;
     }
