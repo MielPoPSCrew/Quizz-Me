@@ -47,7 +47,16 @@ app.use((req, res, next) => {
 
         DB.get('users').find({username}).then((user) => {
             if (_.isEmpty(user)) {
-                DB.get('users').insert({username, "created": Date.now().valueOf()});
+                DB.get('users').insert({
+                   username,
+                   "created": Date.now().valueOf(),
+                   "statistics": {
+                       "gamesTotal": 0,
+                       "gamesWon": 0,
+                       "goodAnswers": 0,
+                       "quickAnswers": 0
+                   }
+                });
             }
         });
     } else {
