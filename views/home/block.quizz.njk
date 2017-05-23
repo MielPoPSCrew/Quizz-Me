@@ -1,0 +1,15 @@
+<h1 class="content-header">Quizz récents</h1>
+
+<div class="content-block">
+
+    {# Todo : remove bottom line + use 'quizz' from front #}
+    {% set quizz = [{name : "test", theme : "Art", url : "TEC58"}] %}
+
+    {% include 'templates/quizz.list.njk'%}
+
+    <div class="right-align action-button">
+        <a href="/quizz" class="waves-effect waves-light btn-flat">Voir toutes les quizz</a>
+        <a href="/quizz/create" class="waves-effect waves-light btn-flat">Créer un quizz</a>
+    </div>
+
+</div>
