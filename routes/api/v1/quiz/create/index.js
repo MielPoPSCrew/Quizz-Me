@@ -11,14 +11,14 @@ function checkQuizIntegrity(quiz){
     if(_.isEmpty(quiz.name))
         error.fields.push('name');
 
-    // check if theme exist and is valid
-    if(_.isEmpty(quiz.theme)){
-        error.fields.push('theme');
+    // check if topic exist and is valid
+    if(_.isEmpty(quiz.topic)){
+        error.fields.push('topic');
     }
     else{
-        DB.get('themes').find({"name":quiz.theme}).then( (r) => {
+        DB.get('topics').find({"name":quiz.topic}).then( (r) => {
            if(_.isEmpty(r))
-               error.fields.push('theme');
+               error.fields.push('topic');
         });
     }
 

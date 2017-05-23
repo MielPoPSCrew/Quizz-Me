@@ -1,0 +1,36 @@
+{# Todo : Assign  'user_id' var and 'score' vars  #}
+
+{% set user_id = "Guest_4865" %}
+{% set stats = [
+    {
+        label : 'Parties gagnées',
+        icon : '/asset/img/trophy.png',
+        score : user.statistics.gamesWon
+    },
+    {
+        label : 'Parties jouées',
+        icon : '/asset/img/games-control.png',
+        score : user.statistics.gamesTotal
+    },
+    {
+        label : 'Bonnes réponses',
+        icon : '/asset/img/question-mark.png',
+        score : user.statistics.goodAnswers
+    },
+    {
+        label : 'Réponses rapides',
+        icon : '/asset/img/flash.png',
+        score : user.statistics.quickAnswers
+    }
+]%}
+
+<h1 class="content-header">Bonjour, {{ user.username }}</h1>
+<div class="content-block">
+    <div class="row">
+        {% for stats_item in stats %}
+            <div class="col s6 m3">
+                {% include 'templates/stats.item.njk'%}
+            </div>
+        {% endfor %}
+    </div>
+</div>

@@ -37,6 +37,7 @@ router.get('/', (req, res) => {
                 // extract useful information and add it to our new quiz
                 quiz._id = rawQuiz._id;
                 quiz.name = rawQuiz.name;
+                quiz.topic = rawQuiz.topic;
 
             });
             game.name = rawGame.name;
