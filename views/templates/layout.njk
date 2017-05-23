@@ -16,18 +16,18 @@
 
         <title>Play!</title>
     </head>
-    
-    <body>
 
-        {% include "html/navbar.html" %}
+    <body>
+        {% include "../html/base/navbar.html" %}
 
         <div class="container">
+            {% include "../html/games.list.html" %}
+
             {%  block main %}
             {%  endblock %}
         </div>
 
-
     </body>
 
-    {% include "html/footer.html" %}
+    <!-- TODO footer -->
 </html>
