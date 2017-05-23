@@ -1,13 +1,29 @@
-<div class="answers content-block">
-    <div class="ans1">
-        <span class="text">Rep 1</span>
+<div class="answers">
+    <div class="col s12 nbAnswers">
+        On attend encore <span class="editable">{{ game.nb_players }} réponses</span>...
     </div>
 
-    <div class="ans2">
-        <span class="text">Rep 2</span>
+    <div class="col s4 answer ans1">
+        <div class="answer-content">
+            <div>
+                <span class="text editable">{{ question.answers[0].text }}</span>
+            </div>
+        </div>
     </div>
 
-    <div class="ans3">
-        <span class="text">Rep 3</span>
+    <div class="col s4 answer ans2">
+        <div class="answer-content">
+            <div>
+                <span class="text editable">{{ question.answers[1].text }}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="col s4 answer ans3">
+        <div class="answer-content">
+            <div>
+                <span class="text editable">{{ question.answers[2].text }}</span>
+            </div>
+        </div>
     </div>
 </div>
