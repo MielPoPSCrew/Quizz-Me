@@ -1,5 +1,11 @@
 {% extends 'templates/layout.njk' %}
 
+{% block scripts %}
+    <script type="text/javascript" src="/js/games/games.create.client.js"></script>
+    <script type="text/javascript" src="/js/games/games.wait.client.js"></script>
+    <script type="text/javascript" src="/js/games/games.play.client.js"></script>
+{% endblock %}
+
 {% block main %}
     <h1>Games !</h1>
 {% endblock %}
