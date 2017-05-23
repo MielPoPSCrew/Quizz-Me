@@ -1,0 +1,29 @@
+nav .nav-wrapper {
+  background: #263238;
+}
+
+nav #nav-mobile {
+  margin-right: 15%;
+}
+
+@media only screen and (max-width: 992px) {
+  nav .brand-logo {
+    margin-left: 0% !important;
+  }
+}
+
+nav .brand-logo {
+  margin-left: 15%
+}
+
+/*
+body {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+main {
+  flex: 1 0 auto;
+}
+    */
