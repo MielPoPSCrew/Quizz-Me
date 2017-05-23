@@ -1,11 +1,33 @@
 {% extends 'templates/layout.njk' %}
 
 {% block scripts %}
-    <script type="text/javascript" src="/js/games/games.create.client.js"></script>
-    <script type="text/javascript" src="/js/games/games.wait.client.js"></script>
     <script type="text/javascript" src="/js/games/games.play.client.js"></script>
 {% endblock %}
 
-{% block main %}
-    <h1>Games !</h1>
+{% block css %}
+    <link rel="stylesheet" href="/css/game.css"/>
 {% endblock %}
+
+{% block main %}
+    <div class="row game">
+
+        <div class="col s9">
+            <h1 class="content-header">Quiz : Vais-je avoir mon année ?</h1>
+
+            <div class="col s12">
+                {% include 'game/question.njk'%}
+            </div>
+
+            <div class="col s12">
+                {% include 'game/answers.njk'%}
+            </div>
+        </div>
+
+        <div class="col s3">
+            {% include 'game/players.njk'%}
+        </div>
+
+    </div>
+{% endblock %}
+
+{% set games = [{name : "test", nb_players : 5, max_players : 25, quizz : "Un test", url : "TEC58"}] %}
