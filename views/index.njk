@@ -1,5 +1,9 @@
 {% extends 'templates/layout.njk' %}
 
 {% block main %}
-    <h1>Bienvenue !</h1>
+    <div class="row">
+        <div class="col s12">
+            {% include 'home/block.stats.njk'%}
+        </div>
+    </div>
 {% endblock %}
