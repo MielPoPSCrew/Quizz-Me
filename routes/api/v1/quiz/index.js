@@ -1,5 +1,7 @@
 const router = require('express').Router();
 
+router.use('/create',require('./create'));
+
 router.get('/', (req, res) => {
 
     // retrieve the list of available quiz

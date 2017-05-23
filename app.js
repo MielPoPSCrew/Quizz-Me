@@ -26,6 +26,15 @@ if(MODE == 'debug'){
         }
     }).catch(console.error);
 }
+
+// import default themes if they aren't in database
+let themes = ["Musique", "Cinéma", "Sciences / Technologies", "Litérature", "Culture Générale"];
+themes.forEach( (theme) => {
+   DB.get('themes').find({'name': theme}).then( (t) => {
+       if(_.isEmpty(t))
+           DB.get('themes').insert({"name": theme});
+   })
+});
 /**
  * Set the user ID or renew it via cookie
  */
@@ -54,6 +63,9 @@ nunjucks.configure('views', {express: app});
 app.set('view engine', 'njk');
 app.use(bodyparser.urlencoded({
     extended: false
+}));
+app.use(bodyparser.json({
+    type: 'application/json'
 }));
 app.use(express.static('public'));
 app.use(require('./routes'));
