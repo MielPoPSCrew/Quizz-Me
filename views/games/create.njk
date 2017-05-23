@@ -1,0 +1,61 @@
+{% extends 'templates/layout.njk' %}
+
+{% block main %}
+    <div class="row">
+        <div class="col s12">
+
+            <h1 class="content-header">Créer une partie</h1>
+            <div class="content-block">
+            <div class="row">
+                <form class="col s12">
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <input placeholder="" id="game_name" type="text" class="validate">
+                            <label for="game_name">Nom de la partie</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s6">
+                            <input id="game_capacity" type="number" class="validate" value="8">
+                            <label for="game_capacity">Nombre de joueurs</label>
+                        </div>
+                        <div class="input-field col s6">
+                            <p>
+                                <input type="checkbox" class="filled-in" id="unlimited_capacity" checked="unchecked" />
+                                <label for="unlimited_capacity">Aucune limite</label>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <input disabled value="I am not editable" id="disabled" type="text" class="validate">
+                            <label for="disabled">Disabled</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <input id="password" type="password" class="validate">
+                            <label for="password">Password</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <input id="email" type="email" class="validate">
+                            <label for="email">Email</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col s12">
+                            This is an inline input field:
+                            <div class="input-field inline">
+                                <input id="email" type="email" class="validate">
+                                <label for="email" data-error="wrong" data-success="right">Email</label>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        </div>
+    </div>
+{% endblock %}
