@@ -1,5 +1,22 @@
 {% extends 'templates/layout.njk' %}
 
 {% block main %}
-    <h1>Index !</h1>
+    <div class="row">
+        <div class="col s12">
+            {% include 'home/block.stats.njk'%}
+        </div>
+
+        <div class="col s12">
+            {% include 'home/block.games.njk'%}
+        </div>
+
+        <div class="col s12">
+            {% include 'home/block.quizz.njk'%}
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block scripts %}
+    {{ super() }}
 {% endblock %}

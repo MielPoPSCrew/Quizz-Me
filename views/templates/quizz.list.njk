@@ -1,0 +1,23 @@
+<table class="highlight responsive-table">
+
+    <thead>
+    <tr>
+        <th>Nom</th>
+        <th>Thème</th>
+        <th></th>
+    </tr>
+    </thead>
+
+    <tbody>
+
+    {% for quiz in quizz %}
+        <tr>
+            <td>{{ quiz.name }}</td>
+            <td>{{ quiz.theme }}</td>
+            <td><a href="/games/create?quizz={{ quizz.url }}" class="waves-effect waves-teal btn">Jouer</a></td>
+        </tr>
+    {% endfor %}
+
+    </tbody>
+
+</table>
