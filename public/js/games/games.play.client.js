@@ -11,9 +11,10 @@ $(document).ready(function() {
     var isQuestionTime = false;
     var firstSentence = 'Êtes vous prêt ?<br> Vous avez ' + questionTimer + ' secondes pour répondre à chaque question.';
 
-    var questionTemplate = { label: 'Qu\'est-ce qui est rond et marron ?', nb_question: 1, answers: [{ id : 0, text: 'Un marron !' }, { id : 1, text: 'Euh, un rond marron ?' }, {id : 2, text: 'C\'est pas faux.' }] };
-    var gameTemplate = { name : 'Ma première game', nb_players : 5, quiz : 'Vais-je avoir mon année ?', nbQuestions: 15 };
-    var responseTemplate = { info: 'En effet vous êtes un gland...'};
+    var questionSample = { label: 'Qu\'est-ce qui est rond et marron ?', nb_question: 1, answers: [{ id : 0, text: 'Un marron !' }, { id : 1, text: 'Euh, un rond marron ?' }, {id : 2, text: 'C\'est pas faux.' }] };
+    var gameSample = { name : 'Ma première game', nb_players : 5, quiz : 'Vais-je avoir mon année ?', nbQuestions: 15 };
+    var responseSample = { info: 'En effet vous êtes un gland...'};
+    var playersSample = [{ name: "Léo", pts: 5 }, { name: "Thomas", pts: 3 }, { name: "Steve", pts: 2 }, { name: "Romain", pts: 1 }, { name: "Clément", pts: 0 }];
 
     // EVENTS
     $('.answers .ans1 .answer-content').on('click', function() { sendAnswer(1) });
@@ -31,20 +32,21 @@ $(document).ready(function() {
         // launchTimer(questionTimer, hideTimer);
         // resetProgress();
         // setProgress(20);
-        initScores();
+        initScores(playersSample);
         initGame();
     }
 
-    function initScores() {
+    function initScores(players) {
+        generateScoreTable(players);
         $('.players .players-table .player .position .editable').html(1);
         $('.players .players-table .player .points .editable').html('0 pt');
     }
 
     function initGame() {
         showQuestion(firstSentence);
-        setNumberOfQuestion(gameTemplate.nbQuestions);
-        setQuizName(gameTemplate.quiz);
-        questionCycle(questionTemplate);
+        setNumberOfQuestion(gameSample.nbQuestions);
+        setQuizName(gameSample.quiz);
+        questionCycle(questionSample);
     }
 
 
@@ -54,7 +56,7 @@ $(document).ready(function() {
         hideQuestion();
         hideResponse();
         hideAnswers();
-        updateNbAnswers(gameTemplate.nb_players);
+        updateNbAnswers(gameSample.nb_players);
         updateNumQuestion(question.nb_question);
         resetProgress();
 
@@ -76,9 +78,9 @@ $(document).ready(function() {
                 hideTimer();
                 hideAnswers();
                 showResponse(1);
-                showQuestion(responseTemplate.info);
+                showQuestion(responseSample.info);
                 // Run en boucle TODO remove
-                // setTimeout(questionCycle(questionTemplate), 1000);
+                // setTimeout(questionCycle(questionSample), 1000);
             }
         }
     }
@@ -242,6 +244,30 @@ $(document).ready(function() {
 
 
     // SCORES AND PLAYERS
+    function generateScoreTable(players) {
+        var playerHtml = '';
+
+        for(var i = 1 ; i <= players.length ; i++) {
+          var p = players[i-1].pts <=1 ? 'pt' : 'pts';
+          playerHtml +=  '<div class="col s12 player">' +
+                            '<div class="col s2 position">' +
+                              '<span class="editable circle">' + i + '</span>' +
+                            '</div>' +
+                            '<div class="col s6 name">' +
+                                '<span class="editable">' + players[i-1].name + '</span>' +
+                            '</div>' +
+                            '<div class="col s2 points">' +
+                                '<span class="editable">' + players[i-1].pts + ' ' + p + '</span>' +
+                            '</div>' +
+                            '<div class="col s2 played">' +
+                                '<span class="editable">...</span>' +
+                            '</div>' +
+                          '</div>';
+        }
+
+        $('.players .players-table').html(playerHtml);
+    }
+
     function updateScores(scores) {
         // TODO update scores ? Quel objet ?
     }
