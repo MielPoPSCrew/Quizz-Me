@@ -1,0 +1,5 @@
+{ "_id" : { "$oid" : "59257d5af54415646f5e9596" }, "name" : "Cinéma" }
+{ "_id" : { "$oid" : "59257d5af54415646f5e9597" }, "name" : "Musique" }
+{ "_id" : { "$oid" : "59257d5af54415646f5e9598" }, "name" : "Sciences / Technologies" }
+{ "_id" : { "$oid" : "59257d5af54415646f5e9599" }, "name" : "Culture Générale" }
+{ "_id" : { "$oid" : "59257d5af54415646f5e959a" }, "name" : "Litérature" }
