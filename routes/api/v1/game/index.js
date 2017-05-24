@@ -1,7 +1,21 @@
 const router = require('express').Router();
+const _      = require('lodash');
+
+router.get('/:id', (req, res) => {
+    let error   = {};
+    DB.get('games').findOne({_id: req.params.id}).then((existing_game) => {
+        console.log(req.query.id);
+        if (_.isEmpty(existing_game)) {
+            res.statusCode = 404;
+            error.message = 'This game does not exist';
+            res.json(error);
+        } else {
+            res.json(existing_game);
+        }
+    });
+});
 
 router.get('/', (req, res) => {
-
     // retrieve a list of public and opened games
     DB.get('games').find({ "status": "opened", "privacy":"public"}).then((rawGames) => {
 
@@ -23,6 +37,7 @@ router.get('/', (req, res) => {
                 // extract useful information and add it to our new quiz
                 quiz._id = rawQuiz._id;
                 quiz.name = rawQuiz.name;
+                quiz.topic = rawQuiz.topic;
 
             });
             game.name = rawGame.name;
