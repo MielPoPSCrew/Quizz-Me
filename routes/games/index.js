@@ -1,10 +1,13 @@
 const router = require('express').Router();
 
+router.get('/', function(req, res, next) {
+    res.render('games/join');
+});
 
 /*
  * Get the list of available games
  */
-router.get('/', function(req, res, next) {
+router.get('/:id', function(req, res, next) {
     DB.get('quiz').find().then((games) => {
        let pendingGames = [];
        let freeGames = [];
@@ -16,9 +19,13 @@ router.get('/', function(req, res, next) {
           else{
               freeGames.push(game);
           }
-          res.render('games', {pendingGames,freeGames});
+          res.render('games/games', {pendingGames,freeGames});
        });
     });
+});
+
+router.get('/create', function(req, res, next) {
+    res.render('games/create');
 });
 
 module.exports = router;

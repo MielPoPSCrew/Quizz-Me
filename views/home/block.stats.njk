@@ -5,26 +5,26 @@
     {
         label : 'Parties gagnées',
         icon : '/asset/img/trophy.png',
-        score : 18
+        score : user.statistics.gamesWon
     },
     {
         label : 'Parties jouées',
         icon : '/asset/img/games-control.png',
-        score : 32
+        score : user.statistics.gamesTotal
     },
     {
         label : 'Bonnes réponses',
         icon : '/asset/img/question-mark.png',
-        score : 10
+        score : user.statistics.goodAnswers
     },
     {
         label : 'Réponses rapides',
         icon : '/asset/img/flash.png',
-        score : 3
+        score : user.statistics.quickAnswers
     }
 ]%}
 
-<h1 class="content-header">Bonjour, {{ user_id }}</h1>
+<h1 class="content-header">Bonjour, {{ user.username }}</h1>
 <div class="content-block">
     <div class="row">
         {% for stats_item in stats %}

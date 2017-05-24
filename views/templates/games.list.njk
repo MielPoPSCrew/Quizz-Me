@@ -22,7 +22,7 @@
                     {{ game.max_players }}
                 {% endif %}
             </td>
-            <td>{{ game.quizz }}</td>
+            <td>{{ game.quiz.name }} ( {{ game.quiz.topic }}</td>
             <td>
                 <a href="/games/{{ game.url }}" class="waves-effect waves-teal btn">Rejoindre</a>
             </td>

@@ -1,0 +1,59 @@
+{% extends '../templates/layout.njk' %}
+
+{% block main %}
+    <div class="row">
+        <div class="col s12">
+
+            <h1 class="content-header">Rejoindre une partie</h1>
+            <div class="content-block center-align">
+                <div class="row">
+                    <div class="input-field col m6 offset-m3 s12">
+                        <i class="material-icons prefix">input</i>
+                        <input id="game_id" type="text" class="validate">
+                        <label for="game_id">Identifiant de la partie à rejoindre :</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col m6 offset-m3 s12">
+                        <button class="btn waves-effect waves-light" id="game_create" type="submit" name="action">Rejoindre la partie
+                            <i class="material-icons right">send</i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col s12">
+
+            <h1 class="content-header">Parties ouvertes</h1>
+            <div class="content-block">
+                <div class="row">
+                    <form class="col s12">
+                        <div class="row">
+                            <div class="input-field col s12 m6">
+                                <input placeholder="" id="search_quizz_name" type="text" class="validate">
+                                <label for="search_quizz_name">Nom de la partie</label>
+                            </div>
+
+                            <div class="input-field col s12 m6">
+                                <select id="search_quizz_theme">
+                                    {%  for theme in thems %}
+                                        <option value="{{ theme.id }}">{{ theme.value }}</option>
+                                    {% endfor %}
+                                </select>
+                                <label for="search_quizz_theme">Thème du quizz</label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="row">
+                    <div class="col s12">
+                        {%  include "templates/games.list.njk" %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
