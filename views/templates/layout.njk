@@ -24,12 +24,16 @@
     </head>
 
     <body>
-        {% include "../html/base/navbar.html" %}
 
-        <div class="container">
-            {%  block main %}
-            {%  endblock %}
-        </div>
+        {% include "../html/base/navbar.html" %}
+            <main>
+                <div class="container">
+                    {%  block main %}
+                    {%  endblock %}
+                </div>
+        </main>
+
+        {% include "../html/base/footer.njk" %}
 
     </body>
 
