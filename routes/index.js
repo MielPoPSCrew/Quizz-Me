@@ -35,7 +35,6 @@ router.get('/', function(req, res) {
             DB.get('games').find({opened: true, private: false}, {sort : { created : 1}}).then((games) => {
 
                 populate(games, games.length, 0, () =>{
-                    console.log(games[0]);
                     // retrieves the most recent quizz
                     DB.get('quiz').find({}, { created: 1, limit : 10}).then( (quiz) => {
                         res.render('index', {user, games, quiz})
