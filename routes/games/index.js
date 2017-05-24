@@ -13,8 +13,33 @@ function populateQuiz(quiz, length, it, cb){
     }
 }
 
+function populateGame(games, length, it, cb){
+    if(it == length)
+        cb();
+    else  {
+        DB.get('quiz').find({_id: games[it].quiz}).then((q) => {
+            games[it].quiz = {};
+            games[it].quiz.id = q[0]._id;
+            games[it].quiz.name = q[0].name;
+            games[it].quiz.topic = q[0].topic;
+            DB.get('topics').find({_id: q[0].topic}).then( (t) =>{
+                games[it].quiz.topic = t[0].name;
+                populateGame(games, length, it+1, cb);
+            })
+        });
+    }
+}
+
+
 router.get('/', function(req, res, next) {
-    res.render('games/join');
+    DB.get('games').find({opened: true, private: false}, {sort : { created : 1}}).then((games) => {
+        populateGame(games, games.length, 0, () => {
+            DB.get('topics').find({}).then((topics)=>{
+                topics.unshift({_id:-1, name: "Tous"});
+                res.render('games/join', {games, topics});
+            });
+        });
+    });
 });
 
 router.get('/create', function(req, res) {

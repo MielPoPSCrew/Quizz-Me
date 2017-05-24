@@ -15,54 +15,78 @@ function populateQuiz(quizz, length, it, cb){
     }
 }
 
+function manageQueryCreation(params, keys, it, query, cb){
+    if(it === keys.length)
+        cb(query);
+    else{
+        console.log(keys[it]);
+        switch(keys[it]){
+            case "creator":
+                query.creator = params["creator"];
+                manageQueryCreation(params, keys, it+1, query,  cb);
+                break;
+            case "opened":
+                query.opened = params["opened"];
+                manageQueryCreation(params, keys, it+1, query,  cb);
+                break;
+            case "name":
+                if(params["name"] !== "")
+                    query.name = new RegExp(params["name"], "i");
+                manageQueryCreation(params, keys, it+1, query,  cb);
+                break;
+            case "createdBefore":
+                query.created = { $lt : params["createdBefore"]};
+                manageQueryCreation(params, keys, it+1, query,  cb);
+                break;
+            case "createdAfter":
+                if(query.created === undefined)
+                    query.created = { $gt : params["createdAfter"]};
+                else
+                    query.created.$gt = params["createdAfter"];
+                manageQueryCreation(params, keys, it+1, query,  cb);
+                break;
+            case "quizId":
+                query.quiz = params["quizId"];
+                manageQueryCreation(params, keys, it+1, query,  cb);
+                break;
+            case "quizName":
+                DB.get('quiz').find({"name" : params["quizName"]}).then( (quizz) => {
+                    query.quiz = { $in: []};
+                    quizz.forEach((quiz) => {
+                        query.quiz.$in.push(quiz._id);
+                    });
+                    manageQueryCreation(params, keys, it+1, query,  cb);
+                });
+                break;
+            case "quizTopic":
+                DB.get('quiz').find({"topic" : monk.id(params["quizTopic"])}).then( (quizz) => {
+                    query.quiz = { $in: []};
+                    quizz.forEach((quiz) => {
+                        query.quiz.$in.push(quiz._id);
+                    });
+                    manageQueryCreation(params, keys, it+1, query,  cb);
+                });
+                break;
+            default:
+                console.log("lkc vbhsemlkje " + params[it]);
+        }
+    }
+
+}
+
 router.get('/game', (req, res) => {
     let query = {};
 
     let params = req.query;
 
-    for(let param in params){
-        switch(param){
-            case "creator":
-                query.creator = params[creator];
-                break;
-            case "opened":
-                query.opened = params[opened];
-                break;
-            case "name":
-                query.name = params[name];
-                break;
-            case "createdBefore":
-                query.created = { $lt : params[createdBefore]};
-                break;
-            case "createdAfter":
-                if(query.created === undefined)
-                    query.created = { $gt : params[createdAfter]};
-                else
-                    query.created.$gt = params[createdAfter];
-                break;
-            case "quizId":
-                query.quiz = params[quizId];
-                break;
-            case "quizName":
-                DB.get('quiz').find({"name" : params[quizName]}).then( (quizz) => {
-                    query.quiz = { $in: []};
-                    quizz.forEach((quiz) => {
-                        query.quiz.$in.push(quiz._id);
-                    });
-                });
-                break;
-            case "quizTopic":
-                DB.get('quiz').find({"theme" : params[quizTopic]}).then( (quizz) => {
-                    query.quiz = { $in: []};
-                    quizz.forEach((quiz) => {
-                        query.quiz.$in.push(quiz._id);
-                    });
-                });
-        }
-    }
-    DB.get('game').find(query, {'_id':false}).then( (res) => {
-        res.json(res);
-        res.status(200);
+    let keys = _.keys(params);
+
+    manageQueryCreation(params, keys, 0, query, () => {
+        console.log(query);
+        DB.get('game').find(query).then( (resu) => {
+            res.json(resu);
+            res.status(200);
+        });
     })
 });
 
