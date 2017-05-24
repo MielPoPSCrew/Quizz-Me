@@ -5,7 +5,7 @@ const router = require('express').Router();
  * Get the list of available games
  */
 router.get('/', function(req, res, next) {
-    DB.get('questions').find().then((games) => {
+    DB.get('quiz').find().then((games) => {
        let pendingGames = [];
        let freeGames = [];
        games.forEach((game) => {
@@ -19,6 +19,10 @@ router.get('/', function(req, res, next) {
           res.render('games', {pendingGames,freeGames});
        });
     });
+});
+
+router.get('/create', function(req, res, next) {
+    res.render('games/create');
 });
 
 module.exports = router;

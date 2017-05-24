@@ -1,0 +1,33 @@
+<table class="highlight responsive-table">
+
+    <thead>
+    <tr>
+        <th>Partie</th>
+        <th>Joueurs</th>
+        <th>Quizz</th>
+        <th></th>
+    </tr>
+    </thead>
+
+    <tbody>
+
+    {% for game in games %}
+        <tr>
+            <td>{{ game.name }}</td>
+            <td>
+                {{ game.nb_players }} /
+                {% if game.max_players < 1 %}
+                    ∞
+                {% else %}
+                    {{ game.max_players }}
+                {% endif %}
+            </td>
+            <td>{{ game.quiz.name }} ( {{ game.quiz.topic }}</td>
+            <td>
+                <a href="/games/{{ game.url }}" class="waves-effect waves-teal btn">Rejoindre</a>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+
+</table>

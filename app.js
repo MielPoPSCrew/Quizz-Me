@@ -15,25 +15,54 @@ app.use(cookieParser());
 // setup MongoDB connection
 global.DB = require('monk')('localhost/quizme');
 
+// import default topics if they aren't in database
+let topics = ["Musique", "Cinéma", "Sciences / Technologies", "Litérature", "Culture Générale"];
+topics.forEach( (topic) => {
+    DB.get('topics').find({'name': topic}).then( (t) => {
+        if(_.isEmpty(t))
+            DB.get('topics').insert({"name": topic});
+    })
+});
+
 // import test scripts if we're in debug
 if(MODE == 'debug'){
-    let rock_script = JSON.parse(fs.readFileSync('samples/rock_sample.json','utf-8'));
-    let rock_script_name = rock_script.name;
 
-    DB.get('quiz').find({name: rock_script_name}).then((script) => {
-        if(script.length === 0){
-            DB.get('quiz').insert(rock_script);
-        }
-    }).catch(console.error);
+    // Insert fake data
+    let fake_users = ["fake_123456","fake_789456", "fake_456123", "fake_456789", "fake_789123", "fake_123789"];
+    let fake_question = { question: "Where is the correct answer?", choices: ["Here", "I don't know", "I've got an idea, but can't say it..."], answer: 0};
+
+    let number_quiz_to_generate = 7;
+    for(let quizNb = 0; quizNb < number_quiz_to_generate; quizNb++){
+        DB.get('quiz').insert({name:"Fake quiz #"+quizNb, created:Date.now().valueOf(), topic:"Culture Générale", questions:[fake_question]});
+    }
+
+    let number_games_to_generate = 5;
+    for(let gameNb = 0; gameNb < number_games_to_generate; gameNb++){
+        DB.get('quiz').find({name:"Fake quiz #"+Date.now().valueOf() % number_quiz_to_generate}).then( (q) => {
+            if (q.length != 1){
+                console.log(q);
+                console.log("THERE WAS AN ISSUE WHILE GENERATING SAMPLE DATA. ABORTING.");
+                process.exit(1);
+            }
+            else{
+                let q_id = q[0]._id;
+                let game_creator = fake_users[Date.now().valueOf() % fake_users.length];
+
+                DB.get('games').insert({name:"Fake game #"+gameNb, creator: game_creator, created: Date.now().valueOf(), quiz: q_id, users: [], opened: true, private: false});
+            }
+        });
+    }
+
 }
+
 /**
  * Set the user ID or renew it via cookie
  */
 app.use((req, res, next) => {
     const hashids = new Hashids();
     let username;
-
-    if (_.isEmpty(req.cookies) || _.isEmpty(req.cookies.username)) {
+    console.log(req.cookies.username);
+    if (_.isEmpty(req.cookies) || req.cookies.username === undefined) {
         username = 'guest_' + hashids.encode(Date.now().valueOf());
 
         DB.get('users').find({username}).then((user) => {
@@ -50,6 +79,7 @@ app.use((req, res, next) => {
                 });
             }
         });
+        req.cookies.username = username;
     } else {
         username = req.cookies.username;
     }
@@ -63,6 +93,9 @@ nunjucks.configure('views', {express: app});
 app.set('view engine', 'njk');
 app.use(bodyparser.urlencoded({
     extended: false
+}));
+app.use(bodyparser.json({
+    type: 'application/json'
 }));
 app.use(express.static('public'));
 app.use(require('./routes'));

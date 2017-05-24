@@ -1,0 +1,60 @@
+/*** Global classes
+---------------------------------------------------- */
+.content-header{
+    margin-bottom: 0.5em;
+    font-size: 1.8em;
+}
+
+.content-block{
+    padding: 0.8rem;
+    background-color: #FCFCFC;
+    border : 1px solid #F0F0F0;
+    border-bottom: 2px solid #CCCCCC;
+}
+
+.action-button {
+    margin-top: 2em;
+}
+/*** Homepage stats
+---------------------------------------------------- */
+.stats-value img{
+    vertical-align: middle;
+}
+
+.stats-value p{
+    font-size: 1.7em;
+    margin-bottom: 0;
+}
+
+
+/*** Navbar
+---------------------------------------------------- */
+nav .nav-wrapper {
+  background: #263238;
+}
+
+nav #nav-mobile {
+  margin-right: 15%;
+}
+
+@media only screen and (max-width: 992px) {
+  nav .brand-logo {
+    margin-left: 0% !important;
+  }
+}
+
+nav .brand-logo {
+  margin-left: 15%
+}
+
+/*
+body {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+main {
+  flex: 1 0 auto;
+}
+    */
