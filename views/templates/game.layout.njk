@@ -1,0 +1,36 @@
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+        <!--Import Google Icon Font TODO -->
+        <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <link rel="stylesheet" href="/css/lib/materialize.min.css"/>
+        <link rel="stylesheet" href="/css/base.css"/>
+        <link rel="stylesheet" href="/css/game.layout.css"/>
+
+        {% block css %}
+        {% endblock %}
+
+        <script type="text/javascript" src="/js/lib/jquery.min.js"></script>
+        <script type="text/javascript" src="/js/lib/materialize.min.js"></script>
+        <script type="text/javascript" src="/js/navbar.js"></script>
+
+        {% block scripts %}
+        {% endblock %}
+
+        <title>Play!</title>
+    </head>
+
+    <body>
+        {% include "../html/base/navbar.html" %}
+
+        <div class="game-layout container">
+            {%  block main %}
+            {%  endblock %}
+        </div>
+
+    </body>
+
+    <!-- TODO footer -->
+</html>

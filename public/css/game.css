@@ -1,7 +1,3 @@
-.game {
-    margin-top: 30px;
-}
-
 /* TODO voir avec Clement pour changer le grey */
 .game .content-block {
     background-color: #F5F5F5;
@@ -17,12 +13,12 @@
 }
 
 .game .question .content-block {
-    height : 30%;
+    height : 20em;
     border-bottom: 0px;
     position: relative;
 }
 
-.game .question .nbQuestion-title {
+.game .question .numQuestion-title {
     font-weight: bold;
     font-size: 1.2em;
 }
@@ -46,7 +42,7 @@
 }
 
 .game .question .content-block .question-text {
-    height: 250px;
+    height: 240px;
     display: table;
     text-align: center;
     width: 100%;
@@ -59,11 +55,7 @@
 }
 
 .game .question .content-block .timer {
-    float: right;
-    /* position: absolute; */
-    bottom: 0;
     font-size: 2em;
-    margin-left: -35px;
 }
 
 
@@ -82,8 +74,6 @@
     margin: 10px;
     padding: 0;
 }
-
-
 
 .game .players .players-table .player div {
     font-size: 1.1em;
@@ -106,17 +96,20 @@
 
 .game .answers .nbAnswers {
     margin : 10px 0 40px 0;
+    height: 30px;
     text-align: center;
     font-size: 1.3em;
 }
 
-.game .answers .answer {
+.game .answers .answer,
+.game .answers .response {
     height : 250px;
     padding: 0 20px;
     border-radius: 1px;
 }
 
-.game .answers .answer .answer-content {
+.game .answers .answer .answer-content,
+.game .answers .response .response-content {
     border-radius: 4px;
     color : white;
     height: 100%;
@@ -146,14 +139,84 @@
     background-color: #538135;
 }
 
-.game .answers .answer .answer-content div {
+.game .answers .res1 .response-content {
+    background-color: #2E74B5;
+}
+
+.game .answers .res2 .response-content {
+    background-color: #C45911;
+}
+
+.game .answers .res3 .response-content {
+    background-color: #538135;
+}
+
+.game .answers .answer .answer-content div,
+.game .answers .response .response-content div {
     display: table;
     height: 100%;
     width: 100%;
 }
 
-.game .answers .answer .answer-content div .text {
+.game .answers .answer .answer-content div .text,
+.game .answers .response .response-content div .text {
     display: table-cell;
     vertical-align: middle;
     font-size: 2em;
+}
+
+
+@media only screen and (max-width: 1200px) {
+    .game .content-header {
+        display: none;
+    }
+
+    .game .question {
+        width: 100%;
+    }
+
+    .game .question .numQuestion-title {
+        font-size: 1.2em;
+    }
+
+    .game .question .content-block .question-text span {
+        font-size: 1.1em;
+        display: block;
+    }
+
+    .game .question .content-block .question-text {
+        height: 100%;
+    }
+
+    .game .answers .response,
+    .game .answers .answer {
+        height: 4em;
+        margin: 5px 0;
+        padding: 0;
+    }
+
+    .game .answers .answer,
+    .game .answers .response {
+        width: 100%;
+    }
+
+    .game .answers .answer .answer-content div .text,
+    .game .answers .response .response-content div .text {
+        display: table-cell;
+        vertical-align: middle;
+        font-size: 1.2em;
+    }
+
+    .game .players.content-block {
+        padding: 0;
+        margin: 10px;
+    }
+
+    .game .question .content-block {
+        height : 8em;
+    }
+
+    .game .answers .nbAnswers {
+        margin-bottom: 10px;
+    }
 }
