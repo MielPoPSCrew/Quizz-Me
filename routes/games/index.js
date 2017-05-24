@@ -15,4 +15,6 @@ router.get('/create', function(req, res, next) {
     res.render('games/create');
 });
 
+router.use('/join', require('./join'));
+
 module.exports = router;

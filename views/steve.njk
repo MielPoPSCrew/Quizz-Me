@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<head>
+    <title>Toto</title>
+    <meta charset="UTF-8"/>
+</head>
+<body>
+<h1 id="title">Socket Room #</h1>
+
+<ul id="events"></ul>
+
+<script src="/js/lib/jquery.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+
+    var gameId = '5923f05e1a7453186b1baca4';
+    var socket = io.connect('http://localhost:8737', { query : "gameid=" + gameId });
+    socket.on('news', function (data) {
+        console.log(data);
+        socket.emit('my other event', { my: 'data' });
+    });
+
+    /*    socket.on('error', function(err){
+        $("#events").append('<li style="color:red;">(!) Connection refused ! \n (Check "room" query parameter</li>');
+    });
+
+    socket.on('init_list', function(list){
+        alert('test');
+        $("#events").append('<li style="color:red;">' + list ['573789ea1850a2d064306098']+ '</li>');
+    });
+
+    socket.on('new_connection', function() {
+        $("#events").append('<li style="color:green;">(+) New connection in room #' + roomId + '</li>');
+    });
+
+    socket.on('new_disconnection', function() {
+        $("#events").append('<li style="color:orange;">(-) New disconnection in room #' + roomId + '</li>');
+    });*/
+</script>
+</body>
