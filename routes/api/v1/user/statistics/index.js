@@ -86,15 +86,15 @@ router.put('/:username', (req, res) => {
     DB.get('users').find({"username": req.params.username}).then((user) => {
         if (_.isEmpty(user)) {
             res.json({"error": "This user does not exist."});
-        } else if (_.isEmpty(req.query.statistics)) {
+        } else if (_.isEmpty(req.body.statistics)) {
             res.json({"error": "The statistics cannot be empty."});
         } else {
             DB.get('users').update(
                 {"username": req.params.username},
-                {"$set": { "statistics": JSON.parse(req.query.statistics)}}
+                {"$set": { "statistics": req.body.statistics}}
             );
 
-            res.json(JSON.parse(req.query.statistics));
+            res.json(req.body.statistics);
         }
     });
 });
