@@ -106,6 +106,7 @@
     height : 250px;
     padding: 0 20px;
     border-radius: 1px;
+    line-height: 1em;
 }
 
 .game .answers .answer .answer-content,
@@ -166,13 +167,14 @@
 }
 
 
-@media only screen and (max-width: 1200px) {
+@media only screen and (max-width: 601px) {
     .game .content-header {
         display: none;
     }
 
     .game .question {
         width: 100%;
+        margin-bottom: 0;
     }
 
     .game .question .numQuestion-title {
@@ -185,12 +187,30 @@
     }
 
     .game .question .content-block .question-text {
-        height: 100%;
+        height: 90%;
+    }
+
+    .game .question .content-block .timer {
+        text-align: center;
+        font-size: 1.2em;
+    }
+
+    .game .question .content-block .loading {
+        padding-top: 0;
+    }
+
+    .game .question .content-block .loading .preloader-wrapper {
+        width: 50px;
+        height: 50px;
+    }
+
+    .game .question .content-block .loading .text-spinner {
+        font-size: 2.3em;
     }
 
     .game .answers .response,
     .game .answers .answer {
-        height: 4em;
+        height: 6em;
         margin: 5px 0;
         padding: 0;
     }
@@ -217,6 +237,7 @@
     }
 
     .game .answers .nbAnswers {
-        margin-bottom: 10px;
+        margin-bottom: 0;
+        font-size: 1em;
     }
 }
