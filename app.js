@@ -37,7 +37,6 @@ app.use((req, res, next) => {
     let username;
     if (_.isEmpty(req.cookies) || req.cookies.username === undefined) {
         username = 'guest_' + hashids.encode(Date.now().valueOf());
-
         DB.get('users').find({username}).then((user) => {
             if (_.isEmpty(user)) {
                 DB.get('users').insert({
@@ -49,17 +48,23 @@ app.use((req, res, next) => {
                        "goodAnswers": 0,
                        "quickAnswers": 0
                    }
+                }).then((u)=>{
+
+                    req.cookies.username = username;
+                    res.cookie('username', username, { maxAge: 60 * 60 * 24 * 7 * 1000, httpOnly: true }); // One week time expiration
+                    next();
+
                 });
             }
         });
-        req.cookies.username = username;
     } else {
         username = req.cookies.username;
+        res.cookie('username', username, { maxAge: 60 * 60 * 24 * 7 * 1000, httpOnly: true }); // One week time expiration
+
+        next();
     }
 
-    res.cookie('username', username, { maxAge: 60 * 60 * 24 * 7 * 1000, httpOnly: true }); // One week time expiration
 
-    next();
 });
 
 nunjucks.configure('views', {express: app});
