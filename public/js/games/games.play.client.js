@@ -1,8 +1,12 @@
 $(document).ready(function() {
 
+    var cookie = '62262615COOKIE';
     var isCreator = true;
+    var nbPlayers = 0;
+    // TODO
+
     var defaultTimer = 3;
-    var questionTimer = 5;
+    var questionTimer = 7;
     var timerStyle  = '-webkit-transition: width ' + questionTimer + 's linear; '
                     + '-moz-transition: width ' + questionTimer + 's linear; '
                     + '-ms-transition: width ' + questionTimer + 's linear; '
@@ -12,11 +16,13 @@ $(document).ready(function() {
     var isQuestionTime = false;
     var firstSentence = 'Êtes vous prêt ?<br> Vous avez ' + questionTimer + ' secondes pour répondre à chaque question.';
     var waitingSentence = 'En attente de connexion des autres joueurs...';
-
+    var winnerSentence = 'And the winner who winneud is...<br>';
     var questionSample = { label: 'Qu\'est-ce qui est rond et marron ?', nb_question: 1, answers: [{ id : 0, text: 'Un marron !' }, { id : 1, text: 'Euh, un rond marron ?' }, {id : 2, text: 'C\'est pas faux.' }] };
     var gameSample = { name : 'Ma première game', nb_players : 5, quiz : 'Vais-je avoir mon année ?', nbQuestions: 15, gameId : 'YH25GI78'  };
     var responseSample = { gagnant: "Clément", place: 2, info: 'En effet vous êtes un gland...'};
     var playersSample = [{ name: "Léo", pts: 5 }, { name: "Thomas", pts: 3 }, { name: "Steve", pts: 2 }, { name: "Romain", pts: 1 }, { name: "Clément", pts: 0 }];
+
+    var game;
 
     // EVENTS
     $('.answers .ans1 .answer-content').on('click', function() { sendAnswer(1) });
@@ -37,20 +43,14 @@ $(document).ready(function() {
 
         updateNumQuestion('-');
         setNumberOfQuestion('-');
-        // launchTimer(questionTimer, hideTimer);
-        // resetProgress();
-        // setProgress(20);
-        // initScores(playersSample);
-        // initGame();
-        initWaitingRoom();
     }
 
-    function initWaitingRoom() {
-        setNumberOfQuestion(gameSample.nbQuestions);
-        setQuizName(gameSample.quiz);
+    function initWaitingRoom(info) {
+        setNumberOfQuestion(info.numberOfQuestions);
+        setQuizName(info.gameTitle);
 
-        $('.players .scores-title .game-name .editable').html(gameSample.name + '<br><span class="game-id">#' + gameSample.gameId + '</span>');
-        showQuestion('Game #' + gameSample.gameId + '<br>' + waitingSentence);
+        $('.players .scores-title .game-name .editable').html(info.gameTitle + '<br><span class="game-id">#' + info.gameId + '</span>');
+        showQuestion('Game #' + info.gameId + '<br>' + waitingSentence);
 
         showLaunchButton();
     }
@@ -64,9 +64,6 @@ $(document).ready(function() {
     function initGame() {
         hideLaunchButton();
         showQuestion(firstSentence);
-        setNumberOfQuestion(gameSample.nbQuestions);
-        setQuizName(gameSample.quiz);
-        questionCycle(questionSample);
     }
 
 
@@ -76,8 +73,10 @@ $(document).ready(function() {
         hideQuestion();
         hideResponse();
         hideAnswers();
-        updateNbAnswers(gameSample.nb_players);
-        updateNumQuestion(question.nb_question);
+        resetPlayed();
+
+        updateNbAnswers(nbPlayers);
+        updateNumQuestion(question.roundNumber);
         resetProgress();
 
         showLoading();
@@ -87,8 +86,8 @@ $(document).ready(function() {
             isQuestionTime = true;
 
             hideLoading();
-            showQuestion(question.label);
-            showAnswers(question.answers);
+            showQuestion(question.question);
+            showAnswers(question.choices);
             showTimer();
             launchTimer(questionTimer, cb2);
 
@@ -97,17 +96,20 @@ $(document).ready(function() {
 
                 hideTimer();
                 hideAnswers();
-                showResponse(1);
-                showQuestion(responseSample.info);
-                // Run en boucle TODO remove
-                // setTimeout(questionCycle(questionSample), 1000);
             }
         }
     }
 
+    function responseCycle(response) {
+        showResponse(response.goodAnswer);
+        showQuestion(response.answerInfo);
+    }
+
     function scoresCycle(scores) {
         generateScoreTable(scores);
-        showQuestion(responseSample.gagnant + ' a été le plus rapide... Vous êtes ' + responseSample.place + 'e.');
+
+        // TODO PLACE AND NB POINTS
+        showQuestion(scores[0].username + ' a été le plus rapide... Vous êtes ' + scores[0].place + 'e.');
     }
 
 
@@ -121,8 +123,9 @@ $(document).ready(function() {
       // TODO
       if (isCreator) {
         console.log("Send Launch game");
-        initGame();
+        socket.emit('launchGame', { myId: cookie });
       }
+
       else console.log("You are not the creator tabarnak !");
     }
 
@@ -213,6 +216,7 @@ $(document).ready(function() {
         // TODO send answerId to server
         if (isQuestionTime) {
             console.log('Send answer [id] : ', answerId);
+            socket.emit('sendAnswer', { myId: cookie, answerId: answerId });
         }
     }
 
@@ -248,6 +252,14 @@ $(document).ready(function() {
         hideOrShowElement('.answers .response', 'hide');
     }
 
+    function resetPlayed() {
+        $('.players .players-table .player .played .editable').html('...');
+    }
+
+    function togglePlayed(name) {
+        $('.players .players-table .player .name .editable:("' + name + '")').parent().parent().find('.played .editable').html('PLAYED');
+    }
+
 
     // QUESTIONS FUNCTIONS
     function waitForNextQuestion() {
@@ -277,8 +289,8 @@ $(document).ready(function() {
     function generateScoreTable(players) {
         var playerHtml = '';
 
-        for(var i = 1 ; i <= players.length ; i++) {
-          var p = players[i-1].pts <=1 ? 'pt' : 'pts';
+        for (var i = 1 ; i <= players.length ; i++) {
+          var p = players[i-1].score <= 1 ? 'pt' : 'pts';
           playerHtml +=  '<div class="col s12 player">' +
                             '<div class="col s2 position">' +
                               '<span class="editable circle">' + i + '</span>' +
@@ -287,7 +299,7 @@ $(document).ready(function() {
                                 '<span class="editable">' + players[i-1].name + '</span>' +
                             '</div>' +
                             '<div class="col s2 points">' +
-                                '<span class="editable">' + players[i-1].pts + ' ' + p + '</span>' +
+                                '<span class="editable">' + players[i-1].score + ' ' + p + '</span>' +
                             '</div>' +
                             '<div class="col s2 played">' +
                                 '<span class="editable">...</span>' +
@@ -313,4 +325,5 @@ $(document).ready(function() {
     }
 
     init();
+
 })
