@@ -2,6 +2,8 @@ const router = require('express').Router();
 
 router.use('/games', require('./games'));
 
+router.use('/quizz', require('./quizz'));
+
 router.use('/api', require('./api'));
 
 router.get('/', function(req, res) {
