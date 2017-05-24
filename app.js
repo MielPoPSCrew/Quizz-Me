@@ -26,14 +26,37 @@ topics.forEach( (topic) => {
 
 // import test scripts if we're in debug
 if(MODE == 'debug'){
-    let rock_script = JSON.parse(fs.readFileSync('samples/rock_sample.json','utf-8'));
-    let rock_script_name = rock_script.name;
 
-    DB.get('quiz').find({name: rock_script_name}).then((script) => {
-        if(script.length === 0){
-            DB.get('quiz').insert(rock_script);
-        }
-    }).catch(console.error);
+    // Remove previous fake data
+    DB.get('games').remove({name:/Fake game/});
+    DB.get('quiz').remove({name:/Fake quiz/});
+
+    // Insert fake data
+    let fake_users = ["fake_123456","fake_789456", "fake_456123", "fake_456789", "fake_789123", "fake_123789"];
+    let fake_question = { question: "Where is the correct answer?", choices: ["Here", "I don't know", "I've got an idea, but can't say it..."], answer: 0};
+
+    let number_quiz_to_generate = 7;
+    for(let quizNb = 0; quizNb < number_quiz_to_generate; quizNb++){
+        DB.get('quiz').insert({name:"Fake quiz #"+quizNb, created:Date.now().valueOf(), topic:"Culture Générale", questions:[fake_question]});
+    }
+
+    let number_games_to_generate = 5;
+    for(let gameNb = 0; gameNb < number_games_to_generate; gameNb++){
+        DB.get('quiz').find({name:"Fake quiz #"+Date.now().valueOf() % number_quiz_to_generate}).then( (q) => {
+            if (q.length != 1){
+                console.log(q);
+                console.log("THERE WAS AN ISSUE WHILE GENERATING SAMPLE DATA. ABORTING.");
+                process.exit(1);
+            }
+            else{
+                let q_id = q[0]._id;
+                let game_creator = fake_users[Date.now().valueOf() % fake_users.length];
+
+                DB.get('games').insert({name:"Fake game #"+gameNb, creator: game_creator, created: Date.now().valueOf(), quiz: q_id, users: [], max_player: -1, nb_players: 0, opened: true, private: false});
+            }
+        });
+    }
+
 }
 
 /**

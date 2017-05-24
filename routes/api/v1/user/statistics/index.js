@@ -43,8 +43,6 @@ router.get('/:username', (req, res) => {
 });
 
 /**
- * @todo Not tested
- *
  * @api {put} /user/statistics/username - Update user statistics information
  * @apiName ShowUserStatistics
  * @apiGroup User
@@ -91,7 +89,11 @@ router.put('/:username', (req, res) => {
         } else if (_.isEmpty(req.body.statistics)) {
             res.json({"error": "The statistics cannot be empty."});
         } else {
-            DB.get('users').update({"username": req.params.username}, {"$set": { "statistics": req.body.statistics}});
+            DB.get('users').update(
+                {"username": req.params.username},
+                {"$set": { "statistics": req.body.statistics}}
+            );
+
             res.json(req.body.statistics);
         }
     });
