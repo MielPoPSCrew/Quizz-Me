@@ -1,0 +1,6 @@
+<select id="search_quizz_topic">
+    {%  for topic in topics %}
+        <option value="{{ topic._id }}">{{ topic.name }}</option>
+    {% endfor %}
+</select>
+<label for="search_quizz_topic">Thème du quiz</label>
