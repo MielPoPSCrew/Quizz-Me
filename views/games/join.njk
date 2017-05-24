@@ -29,6 +29,7 @@
             <div class="content-block">
                 <div class="row">
                     <form class="col s12">
+                        <p>Rechercher une partie :</p>
                         <div class="row">
                             <div class="input-field col s12 m6">
                                 <input placeholder="" id="search_quizz_name" type="text" class="validate">
@@ -36,19 +37,49 @@
                             </div>
 
                             <div class="input-field col s12 m6">
-                                <select id="search_quizz_theme">
-                                    {%  for theme in thems %}
-                                        <option value="{{ theme.id }}">{{ theme.value }}</option>
+                                <select id="search_quizz_topic">
+                                    {%  for topic in topics %}
+                                        <option value="{{ topic._id }}">{{ topic.name }}</option>
                                     {% endfor %}
                                 </select>
-                                <label for="search_quizz_theme">Thème du quizz</label>
+                                <label for="search_quizz_topic">Thème du quizz</label>
                             </div>
                         </div>
                     </form>
                 </div>
+
+                {#
+                    Structure d'une ligne de résultat :
+
+                    <tr>
+                        <td>{{ game.name }}</td>
+                        <td>
+                            {{ game.nb_players }} /
+                            {% if game.max_player < 1  %}
+                                ∞
+                            {% else %}
+                                {{ game.max_player }}
+                            {% endif %}
+                        </td>
+                        <td>{{ game.quiz.name }} ({{ game.quiz.topic }})</td>
+                        <td>
+                            <a href="/games/{{ game._id }}" class="waves-effect waves-teal btn">Rejoindre</a>
+                        </td>
+                    </tr>
+
+                #}
+
+                {% set games = [{name:"Test", quiz: {name:"QuizFoo", topic:"TopicTest"}, nb_players:2, max_player:12}] %}
+
                 <div class="row">
                     <div class="col s12">
                         {%  include "templates/games.list.njk" %}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col s12 right-align">
+                        <a href="/games/create" class="waves-effect waves-teal btn-flat">Créer une partie</a>
                     </div>
                 </div>
             </div>
@@ -60,6 +91,8 @@
     {{ super }}
 
     <script>
+
+        $('#search_quizz_topic').material_select();
 
         // Enable / disable button if content is empty
         $("#game_join_id").on("change keyup past", function () {
@@ -85,7 +118,6 @@
             {
                 document.location.href = "/games/" + $("#game_join_id").val()
             }
-
         }
     </script>
 
