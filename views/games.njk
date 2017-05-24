@@ -1,4 +1,4 @@
-{% extends 'templates/layout.njk' %}
+{% extends 'templates/game.layout.njk' %}
 
 {% set players = [{name: "Léo", pts: 5}, {name: "Thomas", pts: 3}, {name: "Steve", pts: 2}, { name: "Romain", pts: 1}, { name: "Clément", pts: 0}] %}
 
@@ -13,7 +13,7 @@
 {% block main %}
     <div class="row game">
 
-        <div class="col m12 l8">
+        <div class="col m12 l8 main-game-block">
             <h1 class="content-header">Quiz : <span class="editable">-</span></h1>
 
             <div class="col s12">

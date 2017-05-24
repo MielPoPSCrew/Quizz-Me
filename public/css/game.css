@@ -1,7 +1,3 @@
-.game {
-    margin-top: 30px;
-}
-
 /* TODO voir avec Clement pour changer le grey */
 .game .content-block {
     background-color: #F5F5F5;
@@ -172,22 +168,55 @@
 
 @media only screen and (max-width: 1200px) {
     .game .content-header {
-        font-size: 2.6em;
+        display: none;
+    }
+
+    .game .question {
+        width: 100%;
     }
 
     .game .question .numQuestion-title {
-        font-size: 2em;
+        font-size: 1.2em;
+    }
+
+    .game .question .content-block .question-text span {
+        font-size: 1.1em;
+        display: block;
+    }
+
+    .game .question .content-block .question-text {
+        height: 100%;
     }
 
     .game .answers .response,
     .game .answers .answer {
-        height: 150px;
-        margin: 10px 0;
+        height: 4em;
+        margin: 5px 0;
         padding: 0;
+    }
+
+    .game .answers .answer,
+    .game .answers .response {
+        width: 100%;
+    }
+
+    .game .answers .answer .answer-content div .text,
+    .game .answers .response .response-content div .text {
+        display: table-cell;
+        vertical-align: middle;
+        font-size: 1.2em;
     }
 
     .game .players.content-block {
         padding: 0;
         margin: 10px;
+    }
+
+    .game .question .content-block {
+        height : 8em;
+    }
+
+    .game .answers .nbAnswers {
+        margin-bottom: 10px;
     }
 }
