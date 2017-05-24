@@ -27,6 +27,12 @@ topics.forEach( (topic) => {
 // import test scripts if we're in debug
 if(MODE == 'debug'){
 
+    // Remove previous fake data
+    DB.get('quiz').find({name:/Fake quiz/}).then( (q) => {
+        DB.get('games').remove({quiz:q._id});
+    });
+    DB.get('quiz').remove({name:/Fake quiz/});
+
     // Insert fake data
     let fake_users = ["fake_123456","fake_789456", "fake_456123", "fake_456789", "fake_789123", "fake_123789"];
     let fake_question = { question: "Where is the correct answer?", choices: ["Here", "I don't know", "I've got an idea, but can't say it..."], answer: 0};
