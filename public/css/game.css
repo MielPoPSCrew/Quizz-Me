@@ -5,7 +5,7 @@
 
 .game .content-header {
     text-align: center;
-    margin : 25px 0 35px 0;
+    margin : 40px 0 35px 0;
 }
 
 .game .question {
@@ -55,13 +55,14 @@
 }
 
 .game .question .content-block .timer {
+    text-align: center;
     font-size: 2em;
 }
 
 
 
 .game .players {
-    height: 85%
+    height: 100%
 }
 
 .game .players .scores-title {
@@ -106,7 +107,6 @@
     height : 250px;
     padding: 0 20px;
     border-radius: 1px;
-    line-height: 1em;
 }
 
 .game .answers .answer .answer-content,
@@ -218,6 +218,7 @@
     .game .answers .answer,
     .game .answers .response {
         width: 100%;
+        line-height: 1em;
     }
 
     .game .answers .answer .answer-content div .text,
