@@ -16,7 +16,7 @@ router.get('/', function(req, res) {
     DB.get('users').find({username}, {fields:{"_id": 0}}).then( (u) => {
         if (u.length !== 1){
             res.statusCode = 500;
-            res.text("ERROR");
+            res.send("ERROR");
         }
         else{
             let user = u[0];
