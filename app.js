@@ -28,9 +28,7 @@ topics.forEach( (topic) => {
 if(MODE == 'debug'){
 
     // Remove previous fake data
-    DB.get('quiz').find({name:/Fake quiz/}).then( (q) => {
-        DB.get('games').remove({quiz:q._id});
-    });
+    DB.get('games').remove({name:/Fake game/});
     DB.get('quiz').remove({name:/Fake quiz/});
 
     // Insert fake data
