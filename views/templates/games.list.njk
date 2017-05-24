@@ -15,7 +15,7 @@
         <tr>
             <td>{{ game.name }}</td>
             <td>
-                {{ game.nb_players }} /
+                {{ game.users.length }} /
                 {% if game.max_player < 1  %}
                     ∞
                 {% else %}

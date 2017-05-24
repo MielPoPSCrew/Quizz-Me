@@ -35,7 +35,6 @@ if(MODE == 'debug'){
 app.use((req, res, next) => {
     const hashids = new Hashids();
     let username;
-    console.log(req.cookies.username);
     if (_.isEmpty(req.cookies) || req.cookies.username === undefined) {
         username = 'guest_' + hashids.encode(Date.now().valueOf());
 
