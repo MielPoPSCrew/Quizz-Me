@@ -48,6 +48,10 @@ nav .brand-logo {
   margin-left: 15%
 }
 
+.brand-logo img {
+    height: 70px;
+}
+
 /*** Navbar
 ---------------------------------------------------- */
 .quizz-question-id{
