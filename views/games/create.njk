@@ -16,12 +16,12 @@
                         </div>
 
                         <div class="row">
-                            <div class="input-field col s12 m6">
+                            <div class="input-field col s4">
                                 <input id="game_capacity" type="number" class="validate" value="8">
                                 <label for="game_capacity">Nombre de joueurs</label>
                             </div>
-                            <div class="input-field col s12 m6">
-                                <p>
+                            <div class="input-field col s8">
+                                <p class="input-field" >
                                     <input type="checkbox" class="filled-in" id="game_unlimited_capacity" />
                                     <label for="game_unlimited_capacity">Aucune limite</label>
                                 </p>
@@ -58,7 +58,17 @@
                         </div>
 
                         <div class="row">
+                            <div class="divider"></div>
+                            <div class="input-field col s12">
+                                <h5>Rechercher un quiz :</h5>
+                            </div>
+                        </div>
+
+                        <div class="row">
+
+
                             <div class="input-field col s12 m6">
+
                                 <input placeholder="Tapez le nom du quizz à utiliser" id="search_quizz_name" type="text" class="validate">
                                 <label for="search_quizz_name">Nom du quizz</label>
                             </div>
@@ -100,13 +110,14 @@
                         </table>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col s12 center-align">
+            </div>
+            <div class="content-block">
+
+                    <div class="center-align">
                         <button class="btn waves-effect waves-light" id="game_create" type="submit" name="action">Lancer la partie !
                             <i class="material-icons right">send</i>
                         </button>
                     </div>
-                </div>
             </div>
         </div>
     </div>
