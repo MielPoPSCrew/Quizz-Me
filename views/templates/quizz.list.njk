@@ -13,7 +13,7 @@
     {% for q in quiz %}
         <tr>
             <td>{{ q.name }}</td>
-            <td>{{ q.topic }}</td>
+            <td>{{ q.topic.name }}</td>
             <td><a href="/games/create?quiz={{ q._id }}" class="waves-effect waves-teal btn">Jouer</a></td>
         </tr>
     {% endfor %}

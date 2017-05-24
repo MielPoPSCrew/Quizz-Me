@@ -1,7 +1,5 @@
 {% extends 'templates/game.layout.njk' %}
 
-{% set players = [{name: "Léo", pts: 5}, {name: "Thomas", pts: 3}, {name: "Steve", pts: 2}, { name: "Romain", pts: 1}, { name: "Clément", pts: 0}] %}
-
 {% block scripts %}
     <script type="text/javascript" src="/js/games/games.play.client.js"></script>
 {% endblock %}
@@ -17,17 +15,17 @@
             <h1 class="content-header">Quiz : <span class="editable">-</span></h1>
 
             <div class="col s12">
-                {% include 'games/game/question.njk'%}
+                {% include 'games/game/question.njk' %}
             </div>
 
             <div class="col s12">
-                {% include 'games/game/answers.njk'%}
+                {% include 'games/game/answers.njk' %}
 
             </div>
         </div>
 
-        <div class="col s4">
-            {% include 'games/game/players.njk'%}
+        <div class="col m12 l4 scores-game-block">
+            {% include 'games/game/players.njk' %}
         </div>
 
     </div>

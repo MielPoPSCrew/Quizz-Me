@@ -48,6 +48,10 @@ nav .brand-logo {
   margin-left: 15%
 }
 
+.brand-logo img {
+    height: 70px;
+}
+
 /*** Navbar
 ---------------------------------------------------- */
 .quizz-question-id{
@@ -56,14 +60,21 @@ nav .brand-logo {
 /*** Footer
 ---------------------------------------------------- */
 
-/*
-body {
-  display: flex;
-  min-height: 100vh;
-  flex-direction: column;
+
+/*body {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
 }
 
 main {
-  flex: 1 0 auto;
+    flex: 1 0 auto;
 }
-    */
+
+.page-footer {
+    clear: both;
+    position: relative;
+    z-index: 10;
+    height: 3em;
+    margin-top: -3em;
+}*/

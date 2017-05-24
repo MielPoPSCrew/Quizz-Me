@@ -1,124 +1,59 @@
 const router  = require('express').Router();
 const _       = require('lodash');
-const Hashids = require('hashids');
-const   async = require('async');
+const   monk  = require('monk');
+
+function checkField(field, message, error){
+    if(_.isEmpty(field)){
+        error.push(message);
+        return false;
+    }
+    return true;
+}
 
 router.post('/', (req, res) => {
 
-    let error   = {};
+    let error = {messages: []};
     let success;
-    let game    = {};
 
-    async.waterfall([
+    let data = req.body;
 
-        // validation on creator_name
-        (callback) => {
-            if(_.isEmpty(req.body.creator_name)){
-                error.message = 'This game is missing or empty';
-                callback(error);
-            } else {
-                callback(null);
-            }
-        },
+    let allOk = true;
 
-        // validation on quiz
-        (callback) => {
-            if(_.isEmpty(req.body.quiz_name)){
-                error.message = 'quiz_name is missing or empty';
-                callback(error);
-            } else {
-                callback(null);
-            }
-        },
+    allOk &= checkField(data.name, "No name specified", error.messages);
+    allOk &= checkField(data.quiz_id, "No quiz specified", error.messages);
+    allOk &= checkField(data.is_private, "No privacy specified", error.messages);
 
-        // validation on is_private
-        (callback) => {
-            if(_.isEmpty(req.body.is_private)){
-                error.message = 'is_private is missing or empty';
-                callback(error);
-            } else {
-                callback(null);
-            }
-        },
+    if (data.nb_max_user === undefined || data.nb_max_user < -1) {
+        data.nb_max_user = -1;
+    }
 
-        // validation on nb max user
-        (callback) => {
-            if(_.isEmpty(req.body.nb_max_user)){
-                error.message = 'nb_max_user is missing or empty';
-                callback(error);
-            } else {
-                callback(null);
-            }
-        },
-
-        // validation on name
-        (callback) => {
-            if(_.isEmpty(req.body.name)){
-                error.message = 'name is missing or empty';
-                callback(error);
-            } else {
-                callback(null);
-            }
-        },
-
-        // creator exists ?
-        (callback) => {
-            DB.get('users').findOne({username: req.body.creator_name}).then((creator) => {
-                if(creator.length === 0) {
-                    error.message = "creator_name does not exist";
-                    callback(error);
-                } else {
-                    game.users = [creator._id];
-                    game.creator = creator._id;
-                    callback(null);
-                }
-            }).catch(console.error);
-        },
-
-        // quiz exists ?
-        (callback) => {
-            DB.get('quiz').findOne({name: req.body.quiz_name}).then((quiz) => {
-                if(quiz.length === 0) {
-                    error.message = "quiz_name does not exist";
-                    callback(error);
-                } else {
-                    game.id_quiz = quiz._id
-                    callback(null);
-                }
-            }).catch(console.error);
-        },
-
-        // name of game already exists ?
-        (callback) => {
-            DB.get('games').findOne({name: req.body.name}).then((existing_game) => {
-                if(_.isEmpty(existing_game) || existing_game.length === 0) {
-                    let hashids = new Hashids("this is my salt");
-                    let h = hashids.encode(Date.now().valueOf());
-                    game.hash        = h;
-                    game.nb_max_user = _.toInteger(req.body.nb_max_user);
-                    game.name        = req.body.name;
-                    game.private     = req.body.is_private == 'true' ? true : false;
-                    game.started     = false;
-                    DB.get('games').insert(game).then((game_created) => {
-                        success = game_created._id;
-                        callback(null);
-                    }).catch(console.error);
-                } else {
-                    error.message = "game_name already exists";
-                    callback(error);
-                }
-            }).catch(console.error);
-        },
-
-        (callback) => {
-            res.json(success);
-        }
-
-    ], function(error) {
-        console.log('ERROR: ' + error.message);
-        res.statusCode = _.isEmpty(error.statusCode) ? 400 : error.statusCode;
+    if (!allOk) {
+        res.statusCode = 400;
         res.json(error);
-    })
+    }
+    else {
+        DB.get('quiz').find({_id: data.quiz_id}).then((quiz) => {
+            if (quiz.length === 0) {
+                error.messages.push("Quiz does not exist");
+                res.json(error);
+            } else {
+                let game = {
+                    name: data.name,
+                    max_player: data.nb_max_user,
+                    private: data.is_private === 'true',
+                    opened: true,
+                    quiz: req.body.quiz_id,
+                    users: [],
+                    creator: req.cookies.username
+                };
+
+                DB.get('games').insert(game).then((game_created) => {
+                    success = game_created._id;
+                    res.json(success);
+                }).catch(console.error);
+            }
+        })
+    }
 });
 
 module.exports = router;

@@ -6,7 +6,7 @@ router.use('/quizz', require('./quizz'));
 
 router.use('/api', require('./api'));
 
-function populate(games, length, it, cb){
+function populateGame(games, length, it, cb){
     if(it == length)
         cb();
     else  {
@@ -15,7 +15,10 @@ function populate(games, length, it, cb){
             games[it].quiz.id = q[0]._id;
             games[it].quiz.name = q[0].name;
             games[it].quiz.topic = q[0].topic;
-            populate(games, length, it+1, cb);
+            DB.get('topics').find({_id: q[0].topic}).then( (t) =>{
+                games[it].quiz.topic = t[0].name;
+                populateGame(games, length, it+1, cb);
+            })
         });
     }
 }
@@ -34,7 +37,7 @@ router.get('/', function(req, res) {
             // retrieves the most recent games and populates the field "quiz" by quiz info
             DB.get('games').find({opened: true, private: false}, {sort : { created : 1}}).then((games) => {
 
-                populate(games, games.length, 0, () =>{
+                populateGame(games, games.length, 0, () =>{
                     // retrieves the most recent quizz
                     DB.get('quiz').find({}, { created: 1, limit : 10}).then( (quiz) => {
                         res.render('index', {user, games, quiz})
