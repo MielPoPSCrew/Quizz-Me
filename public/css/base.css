@@ -17,6 +17,10 @@
     margin-top: 2em;
 }
 
+.game-join-input {
+    font-size: 2.2em !important;
+}
+
 h5 {
     font-size: 1.2em;
     color: #26a69a;
