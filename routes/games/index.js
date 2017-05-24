@@ -8,20 +8,7 @@ router.get('/', function(req, res, next) {
  * Get the list of available games
  */
 router.get('/:id', function(req, res, next) {
-    DB.get('quiz').find().then((games) => {
-       let pendingGames = [];
-       let freeGames = [];
-       games.forEach((game) => {
-          if(game.nbPlayer !== 0)
-          {
-              pendingGames.push(game);
-          }
-          else{
-              freeGames.push(game);
-          }
-          res.render('games/games', {pendingGames,freeGames});
-       });
-    });
+    res.render('games/games');
 });
 
 router.get('/create', function(req, res, next) {

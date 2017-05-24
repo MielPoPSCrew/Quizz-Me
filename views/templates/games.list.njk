@@ -16,15 +16,15 @@
             <td>{{ game.name }}</td>
             <td>
                 {{ game.nb_players }} /
-                {% if game.max_players < 1 %}
+                {% if game.max_player < 1  %}
                     ∞
                 {% else %}
-                    {{ game.max_players }}
+                    {{ game.max_player }}
                 {% endif %}
             </td>
-            <td>{{ game.quiz.name }} ( {{ game.quiz.topic }}</td>
+            <td>{{ game.quiz.name }} ({{ game.quiz.topic }})</td>
             <td>
-                <a href="/games/{{ game.url }}" class="waves-effect waves-teal btn">Rejoindre</a>
+                <a href="/games/{{ game._id }}" class="waves-effect waves-teal btn">Rejoindre</a>
             </td>
         </tr>
     {% endfor %}
