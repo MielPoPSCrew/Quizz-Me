@@ -52,7 +52,7 @@ if(MODE == 'debug'){
                 let q_id = q[0]._id;
                 let game_creator = fake_users[Date.now().valueOf() % fake_users.length];
 
-                DB.get('games').insert({name:"Fake game #"+gameNb, creator: game_creator, created: Date.now().valueOf(), quiz: q_id, users: [], opened: true, private: false});
+                DB.get('games').insert({name:"Fake game #"+gameNb, creator: game_creator, created: Date.now().valueOf(), quiz: q_id, users: [], max_player: -1, nb_players: 0, opened: true, private: false});
             }
         });
     }
