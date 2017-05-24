@@ -22,8 +22,8 @@
                             </div>
                             <div class="input-field col s12 m6">
                                 <p>
-                                    <input type="checkbox" class="filled-in" id="unlimited_capacity" checked="unchecked" />
-                                    <label for="unlimited_capacity">Aucune limite</label>
+                                    <input type="checkbox" class="filled-in" id="game_unlimited_capacity" />
+                                    <label for="game_unlimited_capacity">Aucune limite</label>
                                 </p>
                             </div>
                         </div>
@@ -50,9 +50,11 @@
                     <form class="col s12">
                         <div class="row">
                             <div class="input-field col s12">
-                                <input placeholder="" id="game_quiz" type="text" class="validate" readonly>
+                                <input placeholder="" id="game_quiz_name" type="text" class="" readonly>
                                 <label for="game_quiz">Quiz séléctionné</label>
                             </div>
+
+                            <input type="hidden" id="game_quiz_id" val=""/>
                         </div>
 
                         <div class="row">
@@ -62,9 +64,9 @@
                             </div>
 
                             <div class="input-field col s12 m6">
-                                <select id="search_quizz_theme">
-                                    {%  for theme in thems %}
-                                        <option value="{{ theme.id }}">{{ theme.value }}</option>
+                                <select id="search_quizz_topic">
+                                    {%  for topic in topics %}
+                                        <option value="{{ topic._id }}">{{ topic.name }}</option>
                                     {% endfor %}
                                 </select>
                                 <label for="search_quizz_theme">Thème du quizz</label>
@@ -74,8 +76,8 @@
                 </div>
                 <div class="row">
                     <div class="col s12">
-                        {% if quizz %}
-                            <table class="highlight responsive-table s12">
+
+                        <table class="highlight responsive-table s12">
                             <thead>
                             <tr>
                                 <th>Nom</th>
@@ -86,19 +88,18 @@
 
                             <tbody>
 
+                            {% set quizz = [{name:"Test", _id:"123456", topic:"Topic"}]%}
+
                             {% for quiz in quizz %}
                                 <tr>
                                     <td>{{ quiz.name }}</td>
-                                    <td>{{ quiz.theme }}</td>
-                                    <td><a class="waves-effect waves-teal btn">Utiliser</a></td>
+                                    <td>{{ quiz.topic }}</td>
+                                    <td><a class="waves-effect waves-teal btn" onclick="onQuizSelected('{{ quiz.name }}', '{{ quiz._id }}')">Utiliser</a></td>
                                 </tr>
                             {% endfor %}
 
                             </tbody>
                         </table>
-                        {% else %}
-                            <p class="center-align">Aucun quizz trouvé.</p>
-                        {% endif %}
                     </div>
                 </div>
                 <div class="row">
@@ -116,47 +117,22 @@
 {% block bottom_scripts %}
     {{ super }}
     <script>
-        /*
-        $(document).ready(function() {
-            $('select').material_select();
-            $('#game_create').click(onSubmit())
-            $('#search_quizz_name').change(searchQuizz());
-            $('#search_quizz_theme').change(searchQuizz());
-        });
-        */
+        $('#search_quizz_topic').material_select();
 
-        function searchQuizz()
-        {
-            console.log("New quizz search");
-        }
+        // Disable game capacity input if unlimited
+        $('#game_unlimited_capacity').on('change', function () {
+            var disable = $('#game_unlimited_capacity').is(':checked');
+            $('#game_capacity').prop('disabled', disable);
+        })
 
-        function computeNbMaxUser()
+        /**
+         * Add the selected quiz name into the text input and set the val of the hidden input with
+         * the quiz id.
+         */
+        function onQuizSelected(name, id)
         {
-            return $('#unlimited_capacity').is(":checked") ? -1 : $( "#game_capacity" ).val();
-        }
-
-        function isPrivate()
-        {
-            return !$('#game_visibility').is(":checked");
-        }
-        
-        function onSubmit() {
-            $.ajax({
-                method: "POST",
-                url: "/api/v1/game/create",
-                data: {
-                    quiz_id: "John",
-                    is_private: isPrivate(),
-                    nb_max_user: computeNbMaxUser(),
-                    name : $( "#game_name" ).val()
-                }
-            })
-            .done(function( msg ) {
-                alert( "Data Saved: " + msg );
-            })
-            .fail(function() {
-                alert( "error" );
-            });
+            $("#game_quiz_name").val(name);
+            $("#game_quiz_id").val(id);
         }
     </script>
 {% endblock %}
