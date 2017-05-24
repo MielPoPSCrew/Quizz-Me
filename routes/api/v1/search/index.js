@@ -1,5 +1,19 @@
 const router = require('express').Router();
 const _ = require('lodash');
+const monk = require('monk');
+
+function populateQuiz(quizz, length, it, cb){
+    if(it == length)
+        cb();
+    else  {
+        DB.get('topics').find({_id: quizz[it].topic}).then((t) => {
+            quizz[it].topic = {};
+            quizz[it].topic.id = t[0]._id;
+            quizz[it].topic.name = t[0].name;
+            populateQuiz(quizz, length, it+1, cb);
+        });
+    }
+}
 
 router.get('/game', (req, res) => {
     let query = {};
@@ -61,37 +75,42 @@ router.get('/quiz', (req, res) => {
     for(let param in params){
         switch(param){
             case "creator":
-                query.creator = params[creator];
+                query.creator = params["creator"];
                 break;
             case "minQuestionNb":
-                query.questions = { $size : { $gt : params[minQuestionNb]}};
+                query.questions = { $size : { $gt : params["minQuestionNb"]}};
                 break;
             case "maxQuestionNb":
                 if(query.questions === undefined)
-                    query.questions = { $size : { $lt : params[maxQuestionNb]}};
+                    query.questions = { $size : { $lt : params["maxQuestionNb"]}};
                 else
-                    query.questions.size.$gt = params[maxQuestionNb];
+                    query.questions.size.$gt = params["maxQuestionNb"];
                 break;
             case "name":
-                query.name = params[name];
+                if(params["name"] !== "")
+                    query.name = new RegExp(params["name"], "i");
                 break;
             case "createdBefore":
-                query.created = { $lt : params[createdBefore]};
+                query.created = { $lt : params["createdBefore"]};
                 break;
             case "createdAfter":
                 if(query.created === undefined)
-                    query.created = { $gt : params[createdAfter]};
+                    query.created = { $gt : params["createdAfter"]};
                 else
-                    query.created.$gt = params[createdAfter];
+                    query.created.$gt = params["createdAfter"];
                 break;
             case "topic":
-                query.topic = topic;
+                if(params["topic"] != -1)
+                    query.topic = monk.id(params["topic"]);
                 break;
         }
     }
-    DB.get('quiz').find(query, {'_id':false}).then( (res) => {
-        res.json(res);
-        res.status(200);
+    console.log(query);
+    DB.get('quiz').find(query, {fields:{questions:0}}).then( (result) => {
+        populateQuiz(result, result.length, 0, ()=>{
+            res.json(result);
+            res.status(200);
+        });
     })
 });
 

@@ -26,7 +26,7 @@
                     </form>
                 </div>
                 <div class="row">
-                    <div class="col s12">
+                    <div class="col s12" id="search_quizz_result">
                         {%  include "templates/quizz.list.njk" %}
                     </div>
                 </div>
@@ -39,5 +39,31 @@
 {% block bottom_scripts %}
     <script>
         $('#search_quizz_topic').material_select();
+
+        function doSearch(){
+            console.log("PERFORM SEARCH");
+            var topic = $('#search_quizz_topic').val();
+            var name = $('#search_quizz_name').val();
+            console.log("TOPIC : "+topic + "    NAME : "+ name);
+            $.ajax({
+                url: '/api/1.0/search/quiz?name='+name+'&topic='+topic,
+                method: 'GET',
+                dataType: 'json',
+                success: function(result, status){
+                    console.log(result);
+                    var table = $('#search_quizz_result').find('table tbody');
+                    table.html("");
+                    result.forEach((r) => {
+                        table.append("<tr><td>"+r.name+"</td><td>"+r.topic.name+"</td><td><a href=\"/games/create?quiz="+r._id+"\" class=\"waves-effect waves-teal btn\">Jouer</a></td></tr>");
+                    });
+                },
+                error: function (result, status, err) {
+                    console.log(err);
+                }
+            })
+        }
+
+        $('#search_quizz_topic').on('change', ()=> {doSearch()});
+        $('#search_quizz_name').on('change keyup paste', ()=> {doSearch()});
     </script>
 {% endblock %}
