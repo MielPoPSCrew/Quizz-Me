@@ -13,6 +13,7 @@ $(document).ready(function() {
 
     var questionTemplate = { label: 'Qu\'est-ce qui est rond et marron ?', nb_question: 1, answers: [{ id : 0, text: 'Un marron !' }, { id : 1, text: 'Euh, un rond marron ?' }, {id : 2, text: 'C\'est pas faux.' }] };
     var gameTemplate = { name : 'Ma première game', nb_players : 5, quiz : 'Vais-je avoir mon année ?', nbQuestions: 15 };
+    var responseTemplate = { info: 'En effet vous êtes un gland...'};
 
     // EVENTS
     $('.answers .ans1 .answer-content').on('click', function() { sendAnswer(1) });
@@ -75,8 +76,9 @@ $(document).ready(function() {
                 hideTimer();
                 hideAnswers();
                 showResponse(1);
+                showQuestion(responseTemplate.info);
                 // Run en boucle TODO remove
-                setTimeout(questionCycle(questionTemplate), 1000);
+                // setTimeout(questionCycle(questionTemplate), 1000);
             }
         }
     }
@@ -154,14 +156,16 @@ $(document).ready(function() {
     }
 
 
-    // ANWSERS FUNCTIONS
+    // ANSWERS FUNCTIONS
     function hideAnswers() {
+        hideOrShowElement('.answers .answer', 'hide');
         hideOrShowElement('.answers .answer .text.editable', 'hide');
         hideOrShowElement('.answers .nbAnswers .nbaContent', 'hide');
     }
 
     function showAnswers(answers) {
         hideOrShowElement('.answers .answer', 'show');
+        hideOrShowElement('.answers .answer .text.editable', 'show');
         $('.answers .ans1 .answer-content .editable').html(answers[0].text);
         $('.answers .ans2 .answer-content .editable').html(answers[1].text);
         $('.answers .ans3 .answer-content .editable').html(answers[2].text);
@@ -196,7 +200,7 @@ $(document).ready(function() {
     }
 
     function showResponse(num) {
-        hideOrShowElement('.anwsers .response', 'show');
+        hideOrShowElement('.answers .response', 'show');
         for (var i = 1 ; i < 4 ; i++) {
             if (num !== i-1) {
                 $('.response.res' + i + ' .response-content').attr('style', 'opacity: 0.3');

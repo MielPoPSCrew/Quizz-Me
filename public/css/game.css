@@ -17,7 +17,7 @@
 }
 
 .game .question .content-block {
-    height : 30%;
+    height : 20em;
     border-bottom: 0px;
     position: relative;
 }
@@ -59,11 +59,7 @@
 }
 
 .game .question .content-block .timer {
-    float: right;
-    /* position: absolute; */
-    bottom: 0;
     font-size: 2em;
-    margin-left: -35px;
 }
 
 
@@ -82,8 +78,6 @@
     margin: 10px;
     padding: 0;
 }
-
-
 
 .game .players .players-table .player div {
     font-size: 1.1em;
@@ -111,13 +105,15 @@
     font-size: 1.3em;
 }
 
-.game .answers .answer {
+.game .answers .answer,
+.game .answers .response {
     height : 250px;
     padding: 0 20px;
     border-radius: 1px;
 }
 
-.game .answers .answer .answer-content {
+.game .answers .answer .answer-content,
+.game .answers .response .response-content {
     border-radius: 4px;
     color : white;
     height: 100%;
@@ -147,13 +143,27 @@
     background-color: #538135;
 }
 
-.game .answers .answer .answer-content div {
+.game .answers .res1 .response-content {
+    background-color: #2E74B5;
+}
+
+.game .answers .res2 .response-content {
+    background-color: #C45911;
+}
+
+.game .answers .res3 .response-content {
+    background-color: #538135;
+}
+
+.game .answers .answer .answer-content div,
+.game .answers .response .response-content div {
     display: table;
     height: 100%;
     width: 100%;
 }
 
-.game .answers .answer .answer-content div .text {
+.game .answers .answer .answer-content div .text,
+.game .answers .response .response-content div .text {
     display: table-cell;
     vertical-align: middle;
     font-size: 2em;
@@ -169,6 +179,7 @@
         font-size: 2em;
     }
 
+    .game .answers .response,
     .game .answers .answer {
         height: 150px;
         margin: 10px 0;
