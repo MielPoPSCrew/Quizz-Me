@@ -1,5 +1,6 @@
 $(document).ready(function() {
 
+    var isCreator = true;
     var defaultTimer = 3;
     var questionTimer = 5;
     var timerStyle  = '-webkit-transition: width ' + questionTimer + 's linear; '
@@ -10,10 +11,11 @@ $(document).ready(function() {
 
     var isQuestionTime = false;
     var firstSentence = 'Êtes vous prêt ?<br> Vous avez ' + questionTimer + ' secondes pour répondre à chaque question.';
+    var waitingSentence = 'En attente de connexion des autres joueurs...';
 
     var questionSample = { label: 'Qu\'est-ce qui est rond et marron ?', nb_question: 1, answers: [{ id : 0, text: 'Un marron !' }, { id : 1, text: 'Euh, un rond marron ?' }, {id : 2, text: 'C\'est pas faux.' }] };
-    var gameSample = { name : 'Ma première game', nb_players : 5, quiz : 'Vais-je avoir mon année ?', nbQuestions: 15 };
-    var responseSample = { info: 'En effet vous êtes un gland...'};
+    var gameSample = { name : 'Ma première game', nb_players : 5, quiz : 'Vais-je avoir mon année ?', nbQuestions: 15, gameId : 'YH25GI78'  };
+    var responseSample = { gagnant: "Clément", place: 2, info: 'En effet vous êtes un gland...'};
     var playersSample = [{ name: "Léo", pts: 5 }, { name: "Thomas", pts: 3 }, { name: "Steve", pts: 2 }, { name: "Romain", pts: 1 }, { name: "Clément", pts: 0 }];
 
     // EVENTS
@@ -21,19 +23,36 @@ $(document).ready(function() {
     $('.answers .ans2 .answer-content').on('click', function() { sendAnswer(2) });
     $('.answers .ans3 .answer-content').on('click', function() { sendAnswer(3) });
 
+    $('.question .launch-button').on('click', function() { launchGame() });
+
     // INIT
     function init() {
+        // Hide elements
         hideQuestion();
         hideLoading();
         hideTimer();
         hideAnswers();
+        hideResponse();
+        hideLaunchButton();
+
         updateNumQuestion('-');
         setNumberOfQuestion('-');
         // launchTimer(questionTimer, hideTimer);
         // resetProgress();
         // setProgress(20);
-        initScores(playersSample);
-        initGame();
+        // initScores(playersSample);
+        // initGame();
+        initWaitingRoom();
+    }
+
+    function initWaitingRoom() {
+        setNumberOfQuestion(gameSample.nbQuestions);
+        setQuizName(gameSample.quiz);
+
+        $('.players .scores-title .game-name .editable').html(gameSample.name + '<br><span class="game-id">#' + gameSample.gameId + '</span>');
+        showQuestion('Game #' + gameSample.gameId + '<br>' + waitingSentence);
+
+        showLaunchButton();
     }
 
     function initScores(players) {
@@ -43,6 +62,7 @@ $(document).ready(function() {
     }
 
     function initGame() {
+        hideLaunchButton();
         showQuestion(firstSentence);
         setNumberOfQuestion(gameSample.nbQuestions);
         setQuizName(gameSample.quiz);
@@ -86,7 +106,8 @@ $(document).ready(function() {
     }
 
     function scoresCycle(scores) {
-        // TODO scores
+        generateScoreTable(scores);
+        showQuestion(responseSample.gagnant + ' a été le plus rapide... Vous êtes ' + responseSample.place + 'e.');
     }
 
 
@@ -94,6 +115,15 @@ $(document).ready(function() {
     function hideOrShowElement(element, action) {
         if (action === 'show') $(element).show();
         if (action === 'hide') $(element).hide();
+    }
+
+    function launchGame() {
+      // TODO
+      if (isCreator) {
+        console.log("Send Launch game");
+        initGame();
+      }
+      else console.log("You are not the creator tabarnak !");
     }
 
 
@@ -268,14 +298,18 @@ $(document).ready(function() {
         $('.players .players-table').html(playerHtml);
     }
 
-    function updateScores(scores) {
-        // TODO update scores ? Quel objet ?
-    }
-
 
     // OTHERS
     function setQuizName(name) {
         $('.content-header .editable').html(name);
+    }
+
+    function hideLaunchButton() {
+        hideOrShowElement('.question .launch-button', 'hide');
+    }
+
+    function showLaunchButton() {
+        if (isCreator) hideOrShowElement('.question .launch-button', 'show');
     }
 
     init();
