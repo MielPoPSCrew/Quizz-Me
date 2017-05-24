@@ -14,8 +14,10 @@ router.get('/', function(req, res) {
 
     // retrieve current user stats
     DB.get('users').find({username}, {fields:{"_id": 0}}).then( (u) => {
-        if(u.length !== 1)
-            res.status(500);
+        if (u.length !== 1){
+            res.statusCode = 500;
+            res.text("ERROR");
+        }
         else{
             let user = u[0];
 
