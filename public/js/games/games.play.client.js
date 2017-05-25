@@ -2,8 +2,8 @@ $(document).ready(function() {
 
     var cookie = '62262615COOKIE';
     var isCreator = true;
-    var nbPlayers = 0;
     // TODO
+    var nbPlayers = 0;
 
     var defaultTimer = 3;
     var questionTimer = 7;
@@ -30,6 +30,7 @@ $(document).ready(function() {
     $('.answers .ans3 .answer-content').on('click', function() { sendAnswer(3) });
 
     $('.question .launch-button').on('click', function() { launchGame() });
+
 
     // INIT
     function init() {

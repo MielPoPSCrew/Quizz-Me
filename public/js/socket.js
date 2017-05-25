@@ -1,4 +1,6 @@
-var socket = io.connect('http://localhost:8737', { query : 'TEST755457' });
+var gameId = window.location.pathname.split('/')[2];
+console.log(gameId);
+var socket = io.connect('http://localhost:8737', { query : gameId });
 
 // EVENTS RECEIVED
 // When enter in the room
