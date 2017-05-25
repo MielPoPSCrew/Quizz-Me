@@ -86,6 +86,60 @@
             });
         }
 
+        function collectAndCheckData(){
+            var data = {};
+            var error = [];
+
+            // game name
+            var name = $('#game_name').val();
+            if(name.trim() === ""){
+                error.push('name');
+            }
+            else{
+                data.name = name;
+            }
+
+            // game topic
+            var topic = $('#search_quizz_topic').val();
+            data.topic = topic;
+
+            // game questions
+            data.questions = [];
+            $('#question-list').find('li').each( function(){
+                var question = {};
+
+                var question_name = $(this).find('.question-name').first().val();
+                if(question_name.trim() === ""){
+                    error.push($(this).index()+"-name");
+                }
+                else {
+                    question.question = question_name;
+                }
+
+                question.choices = [];
+
+                var index = 0;
+                $(this).find('.answer').each(function(){
+                    if($(this).val().trim() === "")
+                        error.push($(this).index()+"answer-"+index);
+                    else{
+                        question.choices.push($(this).val().trim());
+                    }
+                    index++;
+                });
+
+                question.answer = Number($(this).find('[type=radio]:checked').first().val());
+
+                question.info = $(this).find('textarea').first().val().trim();
+
+                data.questions.push(question);
+
+            });
+
+            return error.length === 0 ? data : {error};
+        }
+
+        // add a new question
         $('.add-question').on('click', function(e){
             $('#quiz-item-template').clone().removeClass('hiddendiv').children().first().unwrap().appendTo("#question-list");
             updateQuestionId();
@@ -111,7 +165,15 @@
             e.preventDefault();
         });
 
-
+        $('#game_create').on('click', function(){
+            var data = collectAndCheckData();
+            if(data.error === undefined){
+                console.log("ISOK : " + JSON.stringify(data));
+            }
+            else{
+                console.log("There was an or multiple error(s) : " + JSON.stringify(data));
+            }
+        });
 
 
         updateQuestionId();
