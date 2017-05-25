@@ -124,7 +124,6 @@ $(document).ready(function() {
         updateScoresTable(scores);
 
         // TODO PLACE AND NB POINTS
-        // TODO TRI
         showQuestion(scores[0] + ' a été le plus rapide... Vous êtes ' + 2 + 'e.');
     }
 
@@ -228,6 +227,10 @@ $(document).ready(function() {
     function showAnswers(answers) {
         hideOrShowElement('.answers .answer', 'show');
         hideOrShowElement('.answers .answer .text.editable', 'show');
+        $('.answer.ans1 .answer-content').attr('style', 'background-color: #2E74B5; opacity: 0.9;');
+        $('.answer.ans2 .answer-content').attr('style', 'background-color: #C45911; opacity: 0.9;');
+        $('.answer.ans3 .answer-content').attr('style', 'background-color: #538135; opacity: 0.9;');
+
         $('.answers .ans1 .answer-content .editable').html(answers[0]);
         $('.answers .ans2 .answer-content .editable').html(answers[1]);
         $('.answers .ans3 .answer-content .editable').html(answers[2]);
@@ -240,12 +243,20 @@ $(document).ready(function() {
     }
 
     function sendAnswer(answerId) {
-        // TODO send answerId to server
         if (isQuestionTime) {
             var indexOfAnswer = (answerId-1);
             console.log('Send answer [id] : ', indexOfAnswer);
             socket.emit('sendAnswer', { myId: username, answerId: indexOfAnswer });
+
+            lockAnswers(answerId);
+            isQuestionTime = false;
         }
+    }
+
+    function lockAnswers(answerId) {
+        console.log('lockAnswers');
+        $('.answers .answer-content').attr('style', 'background-color: grey; opacity: 0.3;');
+        $('.answer.ans' + answerId + ' .answer-content').attr('style', 'background-color: grey; opacity: 1;');
     }
 
     function updateNbAnswers(number) {
