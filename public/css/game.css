@@ -3,6 +3,10 @@
     /* background-color: #F5F5F5;*/
 }
 
+/*.username-hidden {
+    display: none !important;
+}*/
+
 .game .content-header {
     text-align: center;
     margin : 40px 0 35px 0;

@@ -152,12 +152,15 @@ class GameManagement {
      * @return {undefined}
      */
     userJoin (socket, username) {
+        console.log('function user join');
+        console.log(username);
         const self = this;
 
         // Get the user information
         DB.get('users')
-          .findOne(username)
+          .findOne({ username: username })
           .then((user) => {
+              console.log('user : ', user);
               if (_.isEmpty(user)) {
                   throw new Error('User not found on the database');
               }
@@ -172,6 +175,7 @@ class GameManagement {
 
               // Send the event to all the users in the room
               socket.broadcast.emit("userEnterInTheGame", {"users": self.users});
+              socket.emit("userEnterInTheGame", {"users": self.users});
               console.log('USER JOIN');
               // Send the game info to the user
               socket.emit("gameEnter", {

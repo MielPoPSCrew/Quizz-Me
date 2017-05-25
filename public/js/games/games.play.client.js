@@ -1,6 +1,9 @@
 $(document).ready(function() {
 
-    var cookie = '62262615COOKIE';
+    var gameId = window.location.pathname.split('/')[2];
+    var username = $('.username-hidden').html();
+    var socket = io.connect('http://localhost:8737', { query : 'gameId=' + gameId + '&username=' + username });
+
     var isCreator = true;
     // TODO
     var nbPlayers = 0;
@@ -107,7 +110,7 @@ $(document).ready(function() {
     }
 
     function scoresCycle(scores) {
-        generateScoreTable(scores);
+        updateScoresTable(scores);
 
         // TODO PLACE AND NB POINTS
         showQuestion(scores[0].username + ' a été le plus rapide... Vous êtes ' + scores[0].place + 'e.');
@@ -291,6 +294,29 @@ $(document).ready(function() {
         var playerHtml = '';
 
         for (var i = 1 ; i <= players.length ; i++) {
+          playerHtml +=  '<div class="col s12 player">' +
+                            '<div class="col s2 position">' +
+                              '<span class="editable circle"> - </span>' +
+                            '</div>' +
+                            '<div class="col s6 name">' +
+                                '<span class="editable">' + players[i-1].username + '</span>' +
+                            '</div>' +
+                            '<div class="col s2 points">' +
+                                '<span class="editable">0 point</span>' +
+                            '</div>' +
+                            '<div class="col s2 played">' +
+                                '<span class="editable">...</span>' +
+                            '</div>' +
+                          '</div>';
+        }
+
+        $('.players .players-table').html(playerHtml);
+    }
+
+    function updateScoresTable(players) {
+        var playerHtml = '';
+
+        for (var i = 1 ; i <= players.length ; i++) {
           var p = players[i-1].score <= 1 ? 'pt' : 'pts';
           playerHtml +=  '<div class="col s12 player">' +
                             '<div class="col s2 position">' +
@@ -311,7 +337,6 @@ $(document).ready(function() {
         $('.players .players-table').html(playerHtml);
     }
 
-
     // OTHERS
     function setQuizName(name) {
         $('.content-header .editable').html(name);
@@ -326,5 +351,55 @@ $(document).ready(function() {
     }
 
     init();
+
+
+    // EVENTS RECEIVED
+    // When enter in the room
+    socket.on('gameEnter', function(info) {
+        console.log('gameEnter');
+        initWaitingRoom(info);
+    });
+
+    // When user enters in the game
+    socket.on('userEnterInTheGame', function(res) {
+        console.log('userEnterInTheGame');
+        console.log('???', res);
+        generateScoreTable(res.users);
+    });
+
+    // When the game start
+    socket.on('gameStart', function() {
+        console.log('gameStart');
+        initGame();
+    });
+
+    // When round start
+    socket.on('roundStart', function(round) {
+        console.log('roudStart');
+        questionCycle(round);
+    });
+
+    socket.on('userAnswer', function(user) {
+        console.log('userAnswer');
+        updateNbAnswers(parseInt($('.answers .nbAnswers .editable').text())-1);
+        // TEST TODO
+        togglePlayed(user.username);
+    });
+
+    socket.on('roundEnd', function(scores, answer) {
+        console.log('roundEnd');
+        scoresCycle(scores);
+        responseCycle(answer);
+    });
+
+    socket.on('gameEnd', function(scores) {
+        console.log('gameEnd');
+        scoresCycle(scores);
+        showQuestion(winnerSentence + scores[0].username + ' !');
+    });
+
+    socket.on('error', function(error) {
+        console.log(error);
+    });
 
 })

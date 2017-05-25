@@ -38,7 +38,7 @@ router.get('/create', function(req, res) {
 });
 
 router.get('/:id', function(req, res, next) {
-    res.render('games/games');
+    res.render('games/games', { username: req.cookies.username });
 });
 
 

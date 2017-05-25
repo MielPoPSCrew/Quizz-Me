@@ -2,16 +2,17 @@ const GameManagement = require('../GameManagement');
 const _ = require('lodash');
 
 function getUsernameFromSocket(socket) {
-    let username = '';
-
-    _.forEach(_.split(socket.handshake.headers.cookie, ';'), (v) => {
-        let tmp = _.split(v, '=');
-        if (tmp[0] == 'username') {
-            username = tmp[1];
-        }
-    });
-
-    return username;
+    // let username = '';
+    // console.log(socket.handshake.query);
+    // _.forEach(_.split(socket.handshake.query.username, ';'), (v) => {
+    //     let tmp = _.split(v, '=');
+    //     if (tmp[0] == 'username') {
+    //         username = tmp[1];
+    //     }
+    // });
+    //
+    // console.log('IIIIIIIIIIIIIIIIIIIIIIIIII : ', socket.handshake.query.username);
+    return socket.handshake.query.username;
 }
 
 module.exports = (io) => {
@@ -19,7 +20,7 @@ module.exports = (io) => {
 
     // On user connect
     io.on('connection', (socket) => {
-        console.log('connection : ', socket.handshake.query.gameId);
+        console.log('connection gameId : ', socket.handshake.query.gameId);
         try {
             gameManagement.userConnect(socket, getUsernameFromSocket(socket), socket.handshake.query.gameId);
         } catch (e) {
