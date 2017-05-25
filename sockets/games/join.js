@@ -10,8 +10,6 @@ function getUsernameFromSocket(socket) {
     //         username = tmp[1];
     //     }
     // });
-    //
-    // console.log('IIIIIIIIIIIIIIIIIIIIIIIIII : ', socket.handshake.query.username);
     return socket.handshake.query.username;
 }
 
@@ -19,32 +17,32 @@ module.exports = (io) => {
     const gameManagement = new GameManagement();
     // On user connect
     io.on('connection', (socket) => {
-        console.log(getUsernameFromSocket(socket) + ' connected')
+
+        console.log(getUsernameFromSocket(socket) + ' connected');
         try {
             gameManagement.userConnect(socket, getUsernameFromSocket(socket), socket.handshake.query.gameId);
         } catch (e) {
             socket.emit("error", e);
         }
+
+        socket.on('launchGame', (data) => {
+            console.log("launchGame");
+            try {
+                gameManagement.launchGame(socket, data.username);
+            } catch (e) {
+                socket.emit("error", e);
+            }
+        });
+
+        socket.on('sendAnswser', (data) => {
+            try {
+                gameManagement.receiveAnswer(socket, data.username, data.answer);
+            } catch (e) {
+                socket.emit("error", e);
+            }
+        });
+
     });
-    // On admin launch game
-    io.on('launchGame', (socket) => {
-        console.log("launch");
-        try {
-            gameManagement.launchGame(socket, getUsernameFromSocket(socket));
-        } catch (e) {
-            socket.emit("error", e);
-        }
-    });
-    // On user send answer
-    io.on('sendAnswser', (socket) => {
-        try {
-            gameManagement.recieveAnswer(socket, getUsernameFromSocket(socket), socket.handshake.query.answer);
-        } catch (e) {
-            socket.emit("error", e);
-        }
-    });
+
     // @todo disconnect ?
-    io.on('ping', (socket) => {
-        console.log('pong ' + getUsernameFromSocket(socket));
-    });
 };

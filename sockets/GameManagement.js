@@ -90,20 +90,21 @@ class GameManagement {
      * @return {undefined}
      */
     launchGame (socket, username) {
-        console.log("launch ??");
+
         if (username !== this.game.creator.username) {
             throw new Error('Your are not the admin of the game');
         }
 
         // Alert users that the game is starting
-        socket.broadcast.emit("gameStart");
+        socket.broadcast.emit('gameStart');
+        socket.emit('gameStart');
 
         // Start the first round after 5 sec
         _.delay(this.startRound, 5000, socket);
     }
 
     /**
-     * Update the round answer with the new answer recieved, call the next round if it was the last answer needed
+     * Update the round answer with the new answer received, call the next round if it was the last answer needed
      *
      * @param {Object} socket - User socket object
      * @param {string} username - The new user name
@@ -111,7 +112,7 @@ class GameManagement {
      *
      * @return {undefined}
      */
-    recieveAnswer (socket, username, answer) {
+    receiveAnswer (socket, username, answer) {
         this.rounds[this.currentRound].push({username, answer, "time": new Date() - this.timer});
         this.scores[username] += _.size(this.users) - this.answered++;
 
@@ -188,7 +189,10 @@ class GameManagement {
      * @return {undefined}
      */
     startRound (socket) {
+        // console.log(socket);
         const self = this;
+
+        console.log(this);
 
         this.answered = 0;
         this.timer    = new Date();

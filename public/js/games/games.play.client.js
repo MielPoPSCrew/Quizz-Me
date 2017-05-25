@@ -3,8 +3,7 @@ $(document).ready(function() {
     var gameId = window.location.pathname.split('/')[2];
     var username = $('.username-hidden').html();
     var socket = io.connect('http://localhost:8737', { query : 'gameId=' + gameId + '&username=' + username });
-    socket.emit('ping');
-    
+
     var isCreator = true;
     // TODO
     var nbPlayers = 0;
@@ -131,6 +130,7 @@ $(document).ready(function() {
         socket.emit('launchGame', { username: username }, function(res) {
             console.log(res);
         });
+        console.log('end');
       }
 
       else console.log("You are not the creator tabarnak !");
