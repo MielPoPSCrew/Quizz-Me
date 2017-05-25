@@ -14,13 +14,28 @@ function getUsernameFromSocket(socket) {
 }
 
 module.exports = (io) => {
-    const gameManagement = new GameManagement();
+    var games = [];
+
     // On user connect
     io.on('connection', (socket) => {
 
+        // Check if game management exit for this room
+        var gameId = socket.handshake.query.gameId;
+        var game = games[gameId];
+
+        if(!game)
+        {
+            game = new GameManagement();
+            games[gameId]  = game;
+        }
+
+        // Séparation des parties
+        console.log("JOIN=" + gameId)
+        socket.join(gameId);
+
         console.log(getUsernameFromSocket(socket) + ' connected');
         try {
-            gameManagement.userConnect(socket, getUsernameFromSocket(socket), socket.handshake.query.gameId);
+            game.userConnect(socket, getUsernameFromSocket(socket), socket.handshake.query.gameId);
         } catch (e) {
             socket.emit("error", e);
         }
@@ -28,7 +43,7 @@ module.exports = (io) => {
         socket.on('launchGame', (data) => {
             console.log("launchGame");
             try {
-                gameManagement.launchGame(socket, data.username);
+                game.launchGame(socket, data.username);
             } catch (e) {
                 socket.emit("error", e);
             }
@@ -36,7 +51,7 @@ module.exports = (io) => {
 
         socket.on('sendAnswser', (data) => {
             try {
-                gameManagement.receiveAnswer(socket, data.username, data.answer);
+                game.receiveAnswer(socket, data.username, data.answer);
             } catch (e) {
                 socket.emit("error", e);
             }

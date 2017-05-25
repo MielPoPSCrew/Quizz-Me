@@ -169,7 +169,8 @@ class GameManagement {
               self.scores[username] = 0;
 
               // Send the event to all the users in the room
-              socket.broadcast.emit("userEnterInTheGame", {"users": self.users});
+              console.log('ROOM=' + this.game._id)
+              socket.in(this.game._id).emit("userEnterInTheGame", {"users": self.users});
               socket.emit("userEnterInTheGame", {"users": self.users});
 
               // Send the game info to the user
@@ -199,7 +200,12 @@ class GameManagement {
         this.timer    = new Date();
         this.timeout  = _.delay(this.endRound, 10000, socket);
 
-        socket.broadcast.emit("roundStart", {
+        socket.in(this.game._id).emit("roundStart", {
+            "roundNumber": self.currentRound,
+            "question"   : self.game.quiz.questions[self.currentRound].question,
+            "choices"    : self.game.quiz.questions[self.currentRound].choices
+        });
+        socket.emit("roundStart", {
             "roundNumber": self.currentRound,
             "question"   : self.game.quiz.questions[self.currentRound].question,
             "choices"    : self.game.quiz.questions[self.currentRound].choices
@@ -215,7 +221,12 @@ class GameManagement {
      */
     endRound (socket) {
         // Alert users that the round is ended and share the scores
-        socket.broadcast.emit("roundEnd", {
+        socket.in(this.game._id).emit("roundEnd", {
+            "scores"    : this.scores,
+            "goodAnswer": this.game.quiz.questions[this.currentRound].answer,
+            "answerInfo": this.game.quiz.questions[this.currentRound].info
+        });
+        socket.emit("roundEnd", {
             "scores"    : this.scores,
             "goodAnswer": this.game.quiz.questions[this.currentRound].answer,
             "answerInfo": this.game.quiz.questions[this.currentRound].info

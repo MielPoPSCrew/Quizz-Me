@@ -65,6 +65,7 @@ class Game {
      * Constructor
      */
     constructor () {
+        this._id    = '';
         this.name    = '';
         this.creator = {};
         this.created = 0;
@@ -85,7 +86,7 @@ class Game {
      */
     loadGameFromMongo (gameMongoLike, quizMongoLike, usersMongoLike) {
         const self = this;
-
+        this._id           = gameMongoLike._id;
         this.name         = gameMongoLike.name;
         this.creator      = _.find(usersMongoLike, {"_id": gameMongoLike.creator});
         this.created      = gameMongoLike.created;
