@@ -75,7 +75,8 @@ $(document).ready(function() {
         $('.players .players-table .player .points .editable').html('0 pt');
     }
 
-    function initGame() {
+    function initGame(obj) {
+        setNbPlayers(obj.nbPlayers;);
         hideLaunchButton();
         showQuestion(firstSentence);
     }
@@ -123,7 +124,8 @@ $(document).ready(function() {
         updateScoresTable(scores);
 
         // TODO PLACE AND NB POINTS
-        showQuestion(scores[0].username + ' a été le plus rapide... Vous êtes ' + scores[0].place + 'e.');
+        // TODO TRI
+        showQuestion(scores[0] + ' a été le plus rapide... Vous êtes ' + 2 + 'e.');
     }
 
 
@@ -143,7 +145,6 @@ $(document).ready(function() {
     }
 
     function isCreator() {
-        console.log(creator === username);
         return creator === username;
     }
 
@@ -152,6 +153,9 @@ $(document).ready(function() {
         showLaunchButton();
     }
 
+    function setNbPlayers(nbp) {
+        nbPlayers = nbp;
+    }
 
     // LOADING CIRCLE FUNCTIONS
     function launchLoading(timer, callback) {
@@ -387,9 +391,9 @@ $(document).ready(function() {
     });
 
     // When the game start
-    socket.on('gameStart', function() {
+    socket.on('gameStart', function(nbPlayers) {
         console.log('gameStart');
-        initGame();
+        initGame(nbPlayers);
     });
 
     // When round start
@@ -405,10 +409,12 @@ $(document).ready(function() {
         togglePlayed(user.username);
     });
 
-    socket.on('roundEnd', function(scores, answer) {
+    socket.on('roundEnd', function(roundEndInfo) {
         console.log('roundEnd');
-        scoresCycle(scores);
-        responseCycle(answer);
+        console.log(roundEndInfo);
+
+        scoresCycle(roundEndInfo.scores);
+        responseCycle(roundEndInfo);
     });
 
     socket.on('gameEnd', function(scores) {
