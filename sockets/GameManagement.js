@@ -28,6 +28,7 @@ class GameManagement {
      * @return {undefined}
      */
     init (socket, username, gameId) {
+
         const self = this;
 
         /**
@@ -37,13 +38,16 @@ class GameManagement {
         DB.get('games')
           .findOne({"_id": gameId})
           .then((game) => {
+              console.log('game : ', game);
+
               if (_.isEmpty(game)) {
                   throw new Error('This game does not exists.');
               }
               // Get answers
-              DB.get('quizz')
+              DB.get('quiz')
                 .findOne({"_id": game.quiz})
                 .then((quiz) => {
+                    console.log('quiz : ', quiz);
                     // Get users
                     DB.get('users')
                       .find({"_id": {"$in": _.concat([], game.creator, game.users, quiz.creator)}})
@@ -70,9 +74,12 @@ class GameManagement {
      * @return {undefined}
      */
     userConnect (socket, username, gameId) {
+        console.log('userConnect');
         if (this.initialized) {
+            console.log('userJoin');
             this.userJoin(socket, username);
         } else {
+            console.log('init');
             this.init(socket, username, gameId);
         }
     }
@@ -165,7 +172,7 @@ class GameManagement {
 
               // Send the event to all the users in the room
               socket.broadcast.emit("userEnterInTheGame", {"users": self.users});
-
+              console.log('USER JOIN');
               // Send the game info to the user
               socket.emit("gameEnter", {
                   // eslint-disable-next-line no-underscore-dangle
