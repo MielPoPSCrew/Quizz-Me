@@ -76,7 +76,7 @@ $(document).ready(function() {
     }
 
     function initGame(obj) {
-        setNbPlayers(obj.nbPlayers;);
+        setNbPlayers(obj.nbPlayers);
         hideLaunchButton();
         showQuestion(firstSentence);
     }
