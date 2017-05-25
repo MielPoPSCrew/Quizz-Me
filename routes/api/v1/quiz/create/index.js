@@ -63,23 +63,23 @@ function checkQuizIntegrity(quiz){
 }
 
 router.post('/', (req, res) => {
-    console.log(req.body);
-    if(req.body == undefined){
+    let data = req.body;
+    console.log(data);
+    if(data == undefined){
         res.status(400);
         res.json({"error":"No data passed"});
     }
     else {
-        let error = checkQuizIntegrity(req.body);
+        let error = checkQuizIntegrity(data);
         if(error.fields.length != 0){
             console.log('error');
             res.status(400);
             res.json(error);
         }
         else{
-            DB.get('quiz').insert(req.body, (err, res) => {
-                // TODO will we do something with the id ?
+            DB.get('quiz').insert(data).then( (result) => {
+                res.json({success: result._id});
             });
-            res.redirect('/quiz');
         }
     }
 });

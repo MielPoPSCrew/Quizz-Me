@@ -169,6 +169,18 @@
             var data = collectAndCheckData();
             if(data.error === undefined){
                 console.log("ISOK : " + JSON.stringify(data));
+                $.ajax({
+                    url: '/api/1.0/quiz/create',
+                    method: 'POST',
+                    data: JSON.stringify(data),
+                    contentType: 'application/json',
+                    success : function(res, status){
+                        console.log('success');
+                    },
+                    error : function(res, status, error){
+                        console.log(res);
+                    }
+                })
             }
             else{
                 console.log("There was an or multiple error(s) : " + JSON.stringify(data));
