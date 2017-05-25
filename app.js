@@ -78,4 +78,8 @@ app.use(bodyparser.json({
 app.use(express.static('public'));
 app.use(require('./routes'));
 
-app.listen(8737);
+let server = require('http').Server(app);
+let io = require('socket.io')(server);
+require(__dirname + '/sockets/games/join')(io);
+
+server.listen(8737);

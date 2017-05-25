@@ -6,12 +6,13 @@
     "body-parser": "^1.17.1",
     "express": "^4.15.2",
     "monk": "^4.0.0",
-    "nunjucks": "^3.0.0"
+    "nunjucks": "^3.0.0",
+    "socket.io": "^2.0.1"
   },
   "devDependencies": {
+    "async": "^2.4.1",
     "cookie-parser": "^1.4.3",
     "hashids": "^1.1.1",
-    "lodash": "^4.17.4",
-    "async": "^2.4.1"
+    "lodash": "^4.17.4"
   }
 }
