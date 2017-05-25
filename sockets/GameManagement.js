@@ -235,14 +235,26 @@ class GameManagement {
     endRound (socket, gameManagement) {
         const self = gameManagement;
         console.log('[' + self.game._id+ '] : ending round ' + self.currentRound);
+        console.log(self.scores);
         // Alert users that the round is ended and share the scores
+
+        var cleanScore = [];
+        _.forEach(self.scores, function(value, key) {
+            cleanScore.push({
+                username: key,
+                score : value
+            })
+        });
+
+        console.log(cleanScore);
+
         socket.in(self.game._id).emit("roundEnd", {
-            "scores"    : self.scores,
+            "scores"    : cleanScore,
             "goodAnswer": self.game.quiz.questions[self.currentRound].answer,
             "answerInfo": self.game.quiz.questions[self.currentRound].info
         });
         socket.emit("roundEnd", {
-            "scores"    : self.scores,
+            "scores"    : cleanScore,
             "goodAnswer": self.game.quiz.questions[self.currentRound].answer,
             "answerInfo": self.game.quiz.questions[self.currentRound].info
         });
