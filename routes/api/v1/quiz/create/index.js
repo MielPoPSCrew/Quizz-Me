@@ -77,9 +77,26 @@ router.post('/', (req, res) => {
             res.json(error);
         }
         else{
-            DB.get('quiz').insert(data).then( (result) => {
-                res.json({success: result._id});
+            let creator = req.cookies.username;
+            if(creator === undefined){
+                console.log('error');
+                res.status(400);
+                res.json({error:"no user"});
+            }
+            DB.get('users').find({username:creator}).then((u)=>{
+                if(u.length != 1){
+                    res.status(400);
+                    res.json({error:"no user"});
+                }
+                else{
+                    data.creator = u[0]._id;
+                    data.created = Date.now().valueOf();
+                    DB.get('quiz').insert(data).then( (result) => {
+                        res.json({success: result._id});
+                    });
+                }
             });
+
         }
     }
 });
