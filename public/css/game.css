@@ -155,27 +155,18 @@
     transition: opacity .4s ease-in-out;
 }
 
+.game .answers .res1 .response-content,
 .game .answers .ans1 .answer-content {
     background-color: #2E74B5;
 }
 
+.game .answers .res2 .response-content,
 .game .answers .ans2 .answer-content {
     background-color: #C45911;
 }
 
+.game .answers .res3 .response-content,
 .game .answers .ans3 .answer-content {
-    background-color: #538135;
-}
-
-.game .answers .res1 .response-content {
-    background-color: #2E74B5;
-}
-
-.game .answers .res2 .response-content {
-    background-color: #C45911;
-}
-
-.game .answers .res3 .response-content {
     background-color: #538135;
 }
 
