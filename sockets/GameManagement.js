@@ -14,6 +14,7 @@ class GameManagement {
         this.scores       = {};
         this.users        = [];
         this.rounds       = [];
+        this.started      = false;
     }
 
     /**
@@ -99,6 +100,8 @@ class GameManagement {
 
         console.log('[' + this.game._id+ '] : game begin');
 
+        this.started = true;
+
         // Alert users that the game is starting
         socket.in(this.game._id).emit('gameStart', {nbPlayers:_.size(this.users)});
         socket.emit('gameStart', {nbPlayers:_.size(this.users)});
@@ -173,16 +176,25 @@ class GameManagement {
               }
 
               if (!_.isUndefined(_.find(self.users, user))) {
-                  throw new Error('User is already in the game');
+                  console.log('[' + this.game._id+ '] : ' + username + ' was already in');
               }
+              else {
 
               // Add the user to the game session
               self.users.push(user);
               self.scores[username] = 0;
 
+              DB.get('games').findOne({_id: self.game._id}).then( (gameInfo) => {
+                  gameInfo.users.push(username);
+
+                  DB.get('games').update(self.game._id, gameInfo);
+              });
+
+
               // Send the event to all the users in the room
 
-              console.log('[' + this.game._id+ '] : ' + username + ' join the game');
+                console.log('[' + this.game._id+ '] : ' + username + ' join the game');
+              }
 
               socket.in(this.game._id).emit("userEnterInTheGame", {"users": self.users});
               socket.emit("userEnterInTheGame", {"users": self.users});
@@ -195,6 +207,17 @@ class GameManagement {
                   "gameTitle"        : self.game.name
               });
           });
+    }
+
+    userLeave (socket, username) {
+        const self = this;
+        self.users.pop(username);
+        delete self.scores[username];
+
+        DB.get('games').findOne({_id: self.game._id}).then( (gameInfo) => {
+            gameInfo.users.pop(username);
+            DB.get('games').update(self.game._id, gameInfo);
+        });
     }
 
     /**

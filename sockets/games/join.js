@@ -20,6 +20,8 @@ module.exports = (io) => {
     io.on('connection', (socket) => {
 
         // Check if game management exit for this room
+
+        var username = socket.handshake.query.username;
         var gameId = socket.handshake.query.gameId;
         var game = games[gameId];
 
@@ -52,6 +54,11 @@ module.exports = (io) => {
             } catch (e) {
                 socket.emit("error", e);
             }
+        });
+
+        socket.on('disconnect', function() {
+            console.log('Got disconnect! ' + username);
+            game.userLeave(socket, username);
         });
 
     });
