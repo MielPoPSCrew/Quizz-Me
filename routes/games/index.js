@@ -13,11 +13,25 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/create', function(req, res) {
-    DB.get('quiz').find({},{fields:{questions:0}}).then( (quiz) => {
-        population.populateQuizWithTopics(quiz, () =>{
-            DB.get('topics').find({}).then( (topics) =>{
-                topics.unshift({_id:-1, name: "Tous"});
-                res.render('games/create', {quizz:quiz, topics});
+    let quizId = req.query.quiz ;
+
+    // Retrieved information on selected quiz
+    DB.get('quiz').findOne({_id: quizId}).then((quizResult) => {
+        let selected_quiz;
+        if (quizResult && quizResult.length !== 0) {
+            selected_quiz = {
+                _id : quizResult._id,
+                name : quizResult.name
+            }
+        }
+
+        // Retrieved existing quizz
+        DB.get('quiz').find({},{fields:{questions:0}}).then( (quiz) => {
+            population.populateQuizWithTopics(quiz, () =>{
+                DB.get('topics').find({}).then( (topics) =>{
+                    topics.unshift({_id:-1, name: "Tous"});
+                    res.render('games/create', {quizz:quiz, topics, selected_quiz});
+                });
             });
         });
     });
