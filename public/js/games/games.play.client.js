@@ -3,7 +3,8 @@ $(document).ready(function() {
     var gameId = window.location.pathname.split('/')[2];
     var username = $('.username-hidden').html();
     var socket = io.connect('http://localhost:8737', { query : 'gameId=' + gameId + '&username=' + username });
-
+    socket.emit('ping');
+    
     var isCreator = true;
     // TODO
     var nbPlayers = 0;
@@ -127,7 +128,9 @@ $(document).ready(function() {
       // TODO
       if (isCreator) {
         console.log("Send Launch game");
-        socket.emit('launchGame', { myId: cookie });
+        socket.emit('launchGame', { username: username }, function(res) {
+            console.log(res);
+        });
       }
 
       else console.log("You are not the creator tabarnak !");
@@ -220,7 +223,7 @@ $(document).ready(function() {
         // TODO send answerId to server
         if (isQuestionTime) {
             console.log('Send answer [id] : ', answerId);
-            socket.emit('sendAnswer', { myId: cookie, answerId: answerId });
+            socket.emit('sendAnswer', { myId: username, answerId: answerId });
         }
     }
 
@@ -296,7 +299,7 @@ $(document).ready(function() {
         for (var i = 1 ; i <= players.length ; i++) {
           playerHtml +=  '<div class="col s12 player">' +
                             '<div class="col s2 position">' +
-                              '<span class="editable circle"> - </span>' +
+                              '<span class="editable circle">  -  </span>' +
                             '</div>' +
                             '<div class="col s6 name">' +
                                 '<span class="editable">' + players[i-1].username + '</span>' +

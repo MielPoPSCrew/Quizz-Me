@@ -38,16 +38,14 @@ class GameManagement {
         DB.get('games')
           .findOne({"_id": gameId})
           .then((game) => {
-              console.log('game : ', game);
-
               if (_.isEmpty(game)) {
                   throw new Error('This game does not exists.');
               }
+
               // Get answers
               DB.get('quiz')
                 .findOne({"_id": game.quiz})
                 .then((quiz) => {
-                    console.log('quiz : ', quiz);
                     // Get users
                     DB.get('users')
                       .find({"_id": {"$in": _.concat([], game.creator, game.users, quiz.creator)}})
@@ -74,12 +72,9 @@ class GameManagement {
      * @return {undefined}
      */
     userConnect (socket, username, gameId) {
-        console.log('userConnect');
         if (this.initialized) {
-            console.log('userJoin');
             this.userJoin(socket, username);
         } else {
-            console.log('init');
             this.init(socket, username, gameId);
         }
     }
@@ -95,6 +90,7 @@ class GameManagement {
      * @return {undefined}
      */
     launchGame (socket, username) {
+        console.log("launch ??");
         if (username !== this.game.creator.username) {
             throw new Error('Your are not the admin of the game');
         }
@@ -152,15 +148,12 @@ class GameManagement {
      * @return {undefined}
      */
     userJoin (socket, username) {
-        console.log('function user join');
-        console.log(username);
         const self = this;
 
         // Get the user information
         DB.get('users')
           .findOne({ username: username })
           .then((user) => {
-              console.log('user : ', user);
               if (_.isEmpty(user)) {
                   throw new Error('User not found on the database');
               }
@@ -176,7 +169,7 @@ class GameManagement {
               // Send the event to all the users in the room
               socket.broadcast.emit("userEnterInTheGame", {"users": self.users});
               socket.emit("userEnterInTheGame", {"users": self.users});
-              console.log('USER JOIN');
+
               // Send the game info to the user
               socket.emit("gameEnter", {
                   // eslint-disable-next-line no-underscore-dangle

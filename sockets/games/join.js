@@ -17,10 +17,9 @@ function getUsernameFromSocket(socket) {
 
 module.exports = (io) => {
     const gameManagement = new GameManagement();
-
     // On user connect
     io.on('connection', (socket) => {
-        console.log('connection gameId : ', socket.handshake.query.gameId);
+        console.log(getUsernameFromSocket(socket) + ' connected')
         try {
             gameManagement.userConnect(socket, getUsernameFromSocket(socket), socket.handshake.query.gameId);
         } catch (e) {
@@ -45,4 +44,7 @@ module.exports = (io) => {
         }
     });
     // @todo disconnect ?
+    io.on('ping', (socket) => {
+        console.log('pong ' + getUsernameFromSocket(socket));
+    });
 };
