@@ -284,7 +284,7 @@ $(document).ready(function() {
     }
 
     function togglePlayed(name) {
-        $('.players .players-table .player .name .editable:("' + name + '")').parent().parent().find('.played .editable').html('PLAYED');
+        $('.players .players-table .player .name .editable:contains("' + name + '")').parent().parent().find('.played .editable').html('PLAYED');
     }
 
 
@@ -338,18 +338,19 @@ $(document).ready(function() {
 
     function updateScoresTable(players) {
         var playerHtml = '';
+        var sortedPlayers = sortScores(players);
 
-        for (var i = 1 ; i <= players.length ; i++) {
-          var p = players[i-1].score <= 1 ? 'pt' : 'pts';
+        for (var i = 1 ; i <= sortedPlayers.length ; i++) {
+          var p = sortedPlayers[i-1].score <= 1 ? 'pt' : 'pts';
           playerHtml +=  '<div class="col s12 player">' +
                             '<div class="col s2 position">' +
                               '<span class="editable circle">' + i + '</span>' +
                             '</div>' +
                             '<div class="col s6 name">' +
-                                '<span class="editable">' + players[i-1].username + '</span>' +
+                                '<span class="editable">' + sortedPlayers[i-1].username + '</span>' +
                             '</div>' +
                             '<div class="col s2 points">' +
-                                '<span class="editable">' + players[i-1].score + ' ' + p + '</span>' +
+                                '<span class="editable">' + sortedPlayers[i-1].score + ' ' + p + '</span>' +
                             '</div>' +
                             '<div class="col s2 played">' +
                                 '<span class="editable">...</span>' +
@@ -359,6 +360,11 @@ $(document).ready(function() {
 
         $('.players .players-table').html(playerHtml);
     }
+
+    function sortScores(scores) {
+        return _.sortBy(scores, 'score');
+    }
+
 
     // OTHERS
     function setQuizName(name) {
