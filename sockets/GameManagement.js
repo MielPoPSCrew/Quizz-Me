@@ -100,8 +100,8 @@ class GameManagement {
         console.log('[' + this.game._id+ '] : game begin');
 
         // Alert users that the game is starting
-        socket.in(this.game._id).emit('gameStart');
-        socket.emit('gameStart');
+        socket.in(this.game._id).emit('gameStart', {nbPlayers:_.size(this.users)});
+        socket.emit('gameStart', {nbPlayers:_.size(this.users)});
 
         // Start the first round after 5 sec
         //_.delay(this.startRound, 5000, socket);
