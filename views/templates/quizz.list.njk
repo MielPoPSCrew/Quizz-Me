@@ -1,3 +1,4 @@
+{% if quiz|length != 0 %}
 <table class="highlight responsive-table">
 
     <thead>
@@ -21,3 +22,6 @@
     </tbody>
 
 </table>
+{% else %}
+    <h5 class="center-align">Aucun quiz sur le site :(</h5>
+{% endif %}

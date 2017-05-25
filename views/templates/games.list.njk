@@ -1,3 +1,4 @@
+{% if games|length != 0 %}
 <table class="highlight responsive-table">
 
     <thead>
@@ -30,3 +31,6 @@
     </tbody>
 
 </table>
+{% else %}
+    <h5 class="center-align">Aucune partie en cours :(</h5>
+{% endif %}
