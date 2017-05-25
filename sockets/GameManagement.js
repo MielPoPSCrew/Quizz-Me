@@ -127,14 +127,20 @@ class GameManagement {
         // Calcul des points
         var goodAnswer = self.game.quiz.questions[self.currentRound].answer;
 
+        console.log("goodAnswer=" + goodAnswer+ " " + typeof goodAnswer)
+        console.log("answer=" + answer+ " " + typeof answer)
+        console.log("username=" + username+ " " + typeof username)
+
         // Bonne réponse
         if(answer == goodAnswer)
         {
+            console.log("GOOD ANSWER")
             self.scores[username]++;
 
             // Plus rapide
             if(self.rounds[self.currentRound].length() === 1)
             {
+                console.log("QUICKER")
                 self.scores[username]++;
             }
         }
