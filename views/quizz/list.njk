@@ -6,13 +6,10 @@
 
             <h1 class="content-header">Liste des quizz</h1>
             <div class="content-block">
-                <div class="row">
-                    <div class="col s12 right-align">
-                        <a href="/quizz/create" class="waves-effect waves-teal btn">Créer un quizz</a>
-                    </div>
-                </div>
+
                 <div class="row">
                     <form class="col s12">
+                        <h5>Rechercher un quizz : </h5>
                         <div class="row">
                             <div class="input-field col s12 m6">
                                 <input placeholder="" id="search_quizz_name" type="text" class="validate">
@@ -28,6 +25,11 @@
                 <div class="row">
                     <div class="col s12" id="search_quizz_result">
                         {%  include "templates/quizz.list.njk" %}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col s12 right-align">
+                        <a href="/quizz/create" class="waves-effect waves-teal btn-flat">Créer un quizz</a>
                     </div>
                 </div>
             </div>
