@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const _ = require('lodash');
+const monk = require('monk');
 
 // check if the quiz is well formed. Returns an error code if not.
 function checkQuizIntegrity(quiz){
@@ -8,7 +9,7 @@ function checkQuizIntegrity(quiz){
     error.fields = [];
 
     // check if name exist and contains something
-    if(_.isEmpty(quiz.name))
+    if(quiz.name === undefined || quiz.name === "")
         error.fields.push('name');
 
     // check if topic exist and is valid
@@ -16,15 +17,12 @@ function checkQuizIntegrity(quiz){
         error.fields.push('topic');
     }
     else{
-        DB.get('topics').find({"name":quiz.topic}).then( (r) => {
+        quiz.topic = monk.id(quiz.topic);
+        DB.get('topics').find({_id:quiz.topic}).then( (r) => {
            if(_.isEmpty(r))
                error.fields.push('topic');
         });
     }
-
-    // check if the quiz contains a creation date (timestamp)
-    if(_.isEmpty(quiz.created))
-        error.fields.push('creation_date');
 
     // check if the quiz contains an array of questions
     if(_.isEmpty(quiz.questions) || quiz.questions.length === 0)
@@ -39,14 +37,14 @@ function checkQuizIntegrity(quiz){
         questionError.questionId = questionNb;
         questionError.fields = [];
 
-        if(_.isEmpty(question.question)){
+        if(question.question === undefined || question.question === ""){
             questionError.fields.push('question');
         }
         if(_.isEmpty(question.choices) || question.choices.length != 3 ){
             questionError.fields.push('choices');
         }
         question.choices.forEach( (choice) => {
-            if(_.isEmpty(choice)){
+            if(choice === ""){
                 questionError.fields.push('choices');
             }
         });
