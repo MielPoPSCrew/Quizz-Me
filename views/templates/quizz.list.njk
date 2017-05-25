@@ -1,3 +1,4 @@
+{% if quiz|length != 0 %}
 <table class="highlight responsive-table">
 
     <thead>
@@ -13,7 +14,7 @@
     {% for q in quiz %}
         <tr>
             <td>{{ q.name }}</td>
-            <td>{{ q.topic }}</td>
+            <td>{{ q.topic.name }}</td>
             <td><a href="/games/create?quiz={{ q._id }}" class="waves-effect waves-teal btn">Jouer</a></td>
         </tr>
     {% endfor %}
@@ -21,3 +22,6 @@
     </tbody>
 
 </table>
+{% else %}
+    <h5 class="center-align">Aucun quiz sur le site :(</h5>
+{% endif %}

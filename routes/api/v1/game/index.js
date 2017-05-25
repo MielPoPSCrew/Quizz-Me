@@ -1,6 +1,9 @@
 const router = require('express').Router();
 const _      = require('lodash');
 
+
+router.use('/create',require('./create'));
+
 router.get('/:id', (req, res) => {
     let error   = {};
     DB.get('games').findOne({_id: req.params.id}).then((existing_game) => {
@@ -52,7 +55,5 @@ router.get('/', (req, res) => {
         res.json(games);
     });
 });
-
-router.use('/create',require('./create'));
 
 module.exports = router;

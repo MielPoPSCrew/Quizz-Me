@@ -16,12 +16,12 @@
                         </div>
 
                         <div class="row">
-                            <div class="input-field col s12 m6">
+                            <div class="input-field col s4">
                                 <input id="game_capacity" type="number" class="validate" value="8">
                                 <label for="game_capacity">Nombre de joueurs</label>
                             </div>
-                            <div class="input-field col s12 m6">
-                                <p>
+                            <div class="input-field col s8">
+                                <p class="input-field" >
                                     <input type="checkbox" class="filled-in" id="game_unlimited_capacity" />
                                     <label for="game_unlimited_capacity">Aucune limite</label>
                                 </p>
@@ -58,7 +58,17 @@
                         </div>
 
                         <div class="row">
+                            <div class="divider"></div>
+                            <div class="input-field col s12">
+                                <h5>Rechercher un quiz :</h5>
+                            </div>
+                        </div>
+
+                        <div class="row">
+
+
                             <div class="input-field col s12 m6">
+
                                 <input placeholder="Tapez le nom du quizz à utiliser" id="search_quizz_name" type="text" class="validate">
                                 <label for="search_quizz_name">Nom du quizz</label>
                             </div>
@@ -75,7 +85,7 @@
                     </form>
                 </div>
                 <div class="row">
-                    <div class="col s12">
+                    <div class="col s12" id="search_quizz_result">
 
                         <table class="highlight responsive-table s12">
                             <thead>
@@ -88,13 +98,11 @@
 
                             <tbody>
 
-                            {% set quizz = [{name:"Test", _id:"123456", topic:"Topic"}]%}
-
                             {% for quiz in quizz %}
                                 <tr>
                                     <td>{{ quiz.name }}</td>
-                                    <td>{{ quiz.topic }}</td>
-                                    <td><a class="waves-effect waves-teal btn" onclick="onQuizSelected('{{ quiz.name }}', '{{ quiz._id }}')">Utiliser</a></td>
+                                    <td>{{ quiz.topic.name }}</td>
+                                    <td><a class="waves-effect waves-teal btn use-quiz" data-quizid="{{ quiz._id }}" data-quizname="{{ quiz.name }}">Utiliser</a></td>
                                 </tr>
                             {% endfor %}
 
@@ -102,13 +110,14 @@
                         </table>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col s12 center-align">
+            </div>
+            <div class="content-block">
+
+                    <div class="center-align">
                         <button class="btn waves-effect waves-light" id="game_create" type="submit" name="action">Lancer la partie !
                             <i class="material-icons right">send</i>
                         </button>
                     </div>
-                </div>
             </div>
         </div>
     </div>
@@ -128,11 +137,74 @@
         /**
          * Add the selected quiz name into the text input and set the val of the hidden input with
          * the quiz id.
-         */
+         *//*
         function onQuizSelected(name, id)
         {
             $("#game_quiz_name").val(name);
             $("#game_quiz_id").val(id);
         }
+*/
+
+        $('.use-quiz').on('click', function(){
+            $("#game_quiz_name").val($(this).data('quizname'));
+            $("#game_quiz_id").val($(this).data('quizid'));
+        });
+
+        $('#search_quizz_topic').material_select();
+
+        function doSearch(){
+            console.log("PERFORM SEARCH");
+            var topic = $('#search_quizz_topic').val();
+            var name = $('#search_quizz_name').val();
+            console.log("TOPIC : "+topic + "    NAME : "+ name);
+            $.ajax({
+                url: '/api/1.0/search/quiz?name='+name+'&topic='+topic,
+                method: 'GET',
+                dataType: 'json',
+                success: function(result, status){
+                    console.log(result);
+                    var table = $('#search_quizz_result').find('table tbody');
+                    table.html("");
+                    result.forEach((r) => {
+                        table.append("<tr><td>"+r.name+"</td><td>"+r.topic.name+"</td><td><a class=\"waves-effect waves-teal btn use-quiz\" data-quizId=\""+r._id+"\" data-quizName=\""+r.name+"\">Utiliser</a></td></tr>");
+                    });
+                },
+                error: function (result, status, err) {
+                    console.log(err);
+                }
+            })
+        }
+
+        $('#search_quizz_topic').on('change', ()=> {doSearch()});
+        $('#search_quizz_name').on('change keyup paste', ()=> {doSearch()});
+
+
+
+        $('#game_create').on('click', () => {
+
+            var data = {
+                name: $('#game_name').val(),
+                is_private: !$('#game_visibility').is(":checked"),
+                quiz_id: $("#game_quiz_id").val()
+            };
+            if(! $('#game_unlimited_capacity').is(":checked") && $('#game_capacity').val() > 0){
+                data.nb_max_user = $('#game_capacity').val();
+            }
+            $.ajax({
+                url : '/api/1.0/game/create/',
+                method: 'POST',
+                dataType: 'json',
+                data,
+                success: (res, status)=>{
+                    window.location.href = "/games/"+res;
+                },
+                error: (res, status, err) => {
+                    console.log(err);
+                    console.log(res);
+                }
+            })
+
+        });
+
     </script>
 {% endblock %}

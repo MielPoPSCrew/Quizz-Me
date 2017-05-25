@@ -1,3 +1,4 @@
+{% if games|length != 0 %}
 <table class="highlight responsive-table">
 
     <thead>
@@ -10,12 +11,11 @@
     </thead>
 
     <tbody>
-
     {% for game in games %}
         <tr>
             <td>{{ game.name }}</td>
             <td>
-                {{ game.nb_players }} /
+                {{ game.users.length }} /
                 {% if game.max_player < 1  %}
                     ∞
                 {% else %}
@@ -31,3 +31,6 @@
     </tbody>
 
 </table>
+{% else %}
+    <h5 class="center-align">Aucune partie en cours :(</h5>
+{% endif %}

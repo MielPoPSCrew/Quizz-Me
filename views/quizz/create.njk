@@ -15,7 +15,7 @@
                             </div>
 
                             <div class="input-field col s12 m6">
-                                {% include 'templates/quizz.theme.selection.njk' %}
+                                {% include 'templates/quizz.topic.selection.njk' %}
                             </div>
                         </div>
                     </form>
@@ -26,7 +26,7 @@
             <div class="content-block">
                 <div class="row">
                     <div class="col s12 right-align">
-                        <a href="/quizz/create" class="waves-effect waves-teal btn-flat">Ajouter une question</a>
+                        <a href="/quizz/create" class="waves-effect waves-teal btn-flat add-question">Ajouter une question</a>
                     </div>
                 </div>
 
@@ -34,7 +34,7 @@
 
                 <div class="row">
                     <div class="col s12">
-                        <ul class="collapsible" data-collapsible="accordion">
+                        <ul class="collapsible popout" id="question-list" data-collapsible="accordion">
                             {% for quiz in quizz %}
                                 {% set quizz_answer_id = loop.index %}
                                 {%  include 'templates/quizz.create.item.njk' %}
@@ -45,16 +45,17 @@
 
                 <div class="row">
                     <div class="col s12 right-align">
-                        <a href="/quizz/create" class="waves-effect waves-teal btn-flat">Ajouter une question</a>
+                        <a href="/quizz/create" class="waves-effect waves-teal btn-flat add-question">Ajouter une question</a>
                     </div>
                 </div>
 
-                <div class="row">
-                    <div class="col s12 center-align">
-                        <button class="btn waves-effect waves-light" id="game_create" type="submit" name="action">Créer le quiz !
-                            <i class="material-icons right">send</i>
-                        </button>
-                    </div>
+            </div>
+            <div class="content-block">
+
+                <div class="center-align">
+                    <button class="btn waves-effect waves-light" id="game_create" type="submit" name="action">Créer le quizz
+                        <i class="material-icons right">send</i>
+                    </button>
                 </div>
             </div>
 
@@ -62,4 +63,11 @@
 
         </div>
     </div>
+{% endblock %}
+
+{% block bottom_scripts %}
+    {{ super }}
+    <script>
+        $('#search_quizz_topic').material_select();
+    </script>
 {% endblock %}
