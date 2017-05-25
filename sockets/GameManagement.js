@@ -15,6 +15,7 @@ class GameManagement {
         this.users        = [];
         this.rounds       = [];
         this.started      = false;
+        this.goodAnswer   = [];
     }
 
     /**
@@ -135,9 +136,10 @@ class GameManagement {
         if(answer == goodAnswer)
         {
             self.scores[username]++;
-            // Plus rapide
-            if(self.rounds[self.currentRound].length <= 1)
+
+            if(!self.goodAnswer[self.currentRound])
             {
+                self.goodAnswer[self.currentRound] = true;
                 self.scores[username]++;
             }
         }
