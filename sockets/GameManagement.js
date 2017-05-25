@@ -121,24 +121,29 @@ class GameManagement {
 
         const self = gameManager;
 
-
+        // Ajout de la réponse
         self.rounds[self.currentRound] = {username, answer, "time": new Date() - self.timer};
-        console.log(self.rounds[self.currentRound]);
-        self.scores[username] += _.size(self.users) - self.answered++;
+
+        // Calcul des points
+        var goodAnswer = self.game.quiz.questions[self.currentRound].answer;
+
+        // Bonne réponse
+        if(answer == goodAnswer)
+        {
+            self.scores[username]++;
+
+            // Plus rapide
+            if(self.rounds[self.currentRound].length() === 1)
+            {
+                self.scores[username]++;
+            }
+        }
 
         console.log('[' + self.game._id+ '] : received answer from' + username + ' : ' + answer);
 
         // Alert users that the user answer the question
         socket.in(self.game._id).emit("userAnswer", {username});
         socket.emit("userAnswer", {username});
-
-        if (self.answered === _.size(self.users)) {
-            // Alert users that the round is ended and share the scores
-            // clearTimeout(self.timeout);
-            // self.endRound(socket);
-            // End of the game if this was the last question
-
-        }
     }
 
     /*********************
@@ -242,6 +247,8 @@ class GameManagement {
                 score : value
             })
         });
+
+        console.log(cleanScore);
 
         socket.in(self.game._id).emit("roundEnd", {
             "scores"    : cleanScore,

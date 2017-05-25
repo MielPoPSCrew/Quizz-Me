@@ -48,7 +48,7 @@ module.exports = (io) => {
 
         socket.on('sendAnswer', (data) => {
             try {
-                game.receiveAnswer(socket, game, data.answerId, data.answerId );
+                game.receiveAnswer(socket, game, data.myId, data.answerId );
             } catch (e) {
                 socket.emit("error", e);
             }
