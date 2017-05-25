@@ -38,7 +38,24 @@ router.get('/create', function(req, res) {
 });
 
 router.get('/:id', function(req, res, next) {
-    res.render('games/games', { username: req.cookies.username });
+    console.log
+    if (req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
+        DB.get('games').findOne({_id: req.params.id}).then( (gameInfo) => {
+            if (!gameInfo || gameInfo.length === 0) {
+                res.render('error', {error:"Cette partie " + req.params.id + " n'existe pas."})
+            } else if(!gameInfo.opened) {
+                res.render('error', {error:"Cette partie n'est pas ouverte ou est terminée."})
+            } else {
+                DB.get('users').find({_id:gameInfo.creator}).then( (creatorInfo) => {
+                    res.render('games/games', { username: req.cookies.username, creator: creatorInfo.username });
+                });
+            }
+        });
+
+    } else {
+        res.render('error', {error:"Cette partie n'existe pas."})
+    }
+
 });
 
 
