@@ -18,7 +18,7 @@ router.get('/create', function(req, res) {
     // Retrieved information on selected quiz
     DB.get('quiz').findOne({_id: quizId}).then((quizResult) => {
         let selected_quiz;
-        if (quizResult.length !== 0) {
+        if (quizResult && quizResult.length !== 0) {
             selected_quiz = {
                 _id : quizResult._id,
                 name : quizResult.name
