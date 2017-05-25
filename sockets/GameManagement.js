@@ -252,8 +252,8 @@ class GameManagement {
 
         if ((self.currentRound) >= _.size(self.game.quiz.questions)) {
             console.log('[' + self.game._id+ '] : game end');
-            socket.in(self.game._id).emit("gameEnd");
-            socket.emit("gameEnd");
+            socket.in(self.game._id).emit("gameEnd", {scores:cleanScore});
+            socket.emit("gameEnd", {scores:cleanScore});
         } else {
             // Start the new round
             console.log('[' + self.game._id+ '] : new round');
