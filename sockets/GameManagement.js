@@ -75,6 +75,7 @@ class GameManagement {
         if (this.initialized) {
             this.userJoin(socket, username);
         } else {
+            // console.log('init userConnect');
             this.init(socket, username, gameId);
         }
     }

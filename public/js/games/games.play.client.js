@@ -1,31 +1,39 @@
 $(document).ready(function() {
 
+    // SOCKET
     var gameId = window.location.pathname.split('/')[2];
     var username = $('.username-hidden').html();
     var socket = io.connect('http://localhost:8737', { query : 'gameId=' + gameId + '&username=' + username });
 
-    var isCreator = true;
-    // TODO
-    var nbPlayers = 0;
 
-    var defaultTimer = 3;
-    var questionTimer = 7;
-    var timerStyle  = '-webkit-transition: width ' + questionTimer + 's linear; '
+    // DEFAULT VARS
+    const defaultTimer = 3;
+    const questionTimer = 7;
+    const timerStyle  = '-webkit-transition: width ' + questionTimer + 's linear; '
                     + '-moz-transition: width ' + questionTimer + 's linear; '
                     + '-ms-transition: width ' + questionTimer + 's linear; '
                     + '-o-transition: width ' + questionTimer + 's linear; '
                     + 'transition: width ' + questionTimer + 's linear;';
 
-    var isQuestionTime = false;
-    var firstSentence = 'Êtes vous prêt ?<br> Vous avez ' + questionTimer + ' secondes pour répondre à chaque question.';
-    var waitingSentence = 'En attente de connexion des autres joueurs...';
-    var winnerSentence = 'And the winner who winneud is...<br>';
+
+    // SENTENCES
+    const firstSentence = 'Êtes vous prêt ?<br> Vous avez ' + questionTimer + ' secondes pour répondre à chaque question.';
+    const waitingSentence = 'En attente de connexion des autres joueurs...';
+    const winnerSentence = 'And the winner who winneud is...<br>';
+
+
+    // SAMPLES
     var questionSample = { label: 'Qu\'est-ce qui est rond et marron ?', nb_question: 1, answers: [{ id : 0, text: 'Un marron !' }, { id : 1, text: 'Euh, un rond marron ?' }, {id : 2, text: 'C\'est pas faux.' }] };
     var gameSample = { name : 'Ma première game', nb_players : 5, quiz : 'Vais-je avoir mon année ?', nbQuestions: 15, gameId : 'YH25GI78'  };
     var responseSample = { gagnant: "Clément", place: 2, info: 'En effet vous êtes un gland...'};
     var playersSample = [{ name: "Léo", pts: 5 }, { name: "Thomas", pts: 3 }, { name: "Steve", pts: 2 }, { name: "Romain", pts: 1 }, { name: "Clément", pts: 0 }];
 
-    var game;
+
+    // USEFUL VARS
+    var isQuestionTime = false;
+    var isCreator = true;
+    var nbPlayers = 0;
+
 
     // EVENTS
     $('.answers .ans1 .answer-content').on('click', function() { sendAnswer(1) });
@@ -53,8 +61,8 @@ $(document).ready(function() {
         setNumberOfQuestion(info.numberOfQuestions);
         setQuizName(info.gameTitle);
 
-        $('.players .scores-title .game-name .editable').html(info.gameTitle + '<br><span class="game-id">#' + info.gameId + '</span>');
-        showQuestion('Game #' + info.gameId + '<br>' + waitingSentence);
+        $('.players .scores-title .game-name .editable').html(info.gameTitle + '<br><span class="game-id">#' + gameId + '</span>');
+        showQuestion('Game #' + gameId + '<br>' + waitingSentence);
 
         showLaunchButton();
     }
@@ -124,13 +132,9 @@ $(document).ready(function() {
     }
 
     function launchGame() {
-      // TODO
       if (isCreator) {
         console.log("Send Launch game");
-        socket.emit('launchGame', { username: username }, function(res) {
-            console.log(res);
-        });
-        console.log('end');
+        socket.emit('launchGame', { username: username });
       }
 
       else console.log("You are not the creator tabarnak !");
@@ -360,13 +364,13 @@ $(document).ready(function() {
     // When enter in the room
     socket.on('gameEnter', function(info) {
         console.log('gameEnter');
+        console.log(info);
         initWaitingRoom(info);
     });
 
     // When user enters in the game
     socket.on('userEnterInTheGame', function(res) {
         console.log('userEnterInTheGame');
-        console.log('???', res);
         generateScoreTable(res.users);
     });
 
