@@ -122,31 +122,22 @@ class GameManagement {
         const self = gameManager;
 
         // Ajout de la réponse
-        self.rounds[self.currentRound] = [];
         self.rounds[self.currentRound].push({username, answer, "time": new Date() - self.timer});
-        console.log(self.rounds[self.currentRound]);
+
 
         // Calcul des points
         var goodAnswer = self.game.quiz.questions[self.currentRound].answer;
 
-        // console.log("goodAnswer=" + goodAnswer+ " " + typeof goodAnswer)
-        // console.log("answer=" + answer+ " " + typeof answer)
-        // console.log("username=" + username+ " " + typeof username)
-
         // Bonne réponse
-        // if(answer == goodAnswer)
-        // {
-        //     console.log(self.rounds[self.currentRound]);
-        //     console.log("GOOD ANSWER - " + self.rounds[self.currentRound].length)
-        //     self.scores[username]++;
-        //
-        //     // Plus rapide
-        //     if(self.rounds[self.currentRound].length <= 1)
-        //     {
-        //         console.log("QUICKER")
-        //         self.scores[username]++;
-        //     }
-        // }
+        if(answer == goodAnswer)
+        {
+            self.scores[username]++;
+            // Plus rapide
+            if(self.rounds[self.currentRound].length <= 1)
+            {
+                self.scores[username]++;
+            }
+        }
 
         console.log('[' + self.game._id+ '] : received answer from' + username + ' : ' + answer);
 
@@ -221,6 +212,7 @@ class GameManagement {
         self.answered = 0;
         self.timer    = new Date();
         self.timeout  = _.delay(self.endRound, 13000, socket, self);
+        self.rounds[self.currentRound] = [];
 
         console.log('[' + self.game._id+ '] : starting round ' + (self.currentRound + 1));
 
