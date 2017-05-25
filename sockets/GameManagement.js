@@ -129,8 +129,8 @@ class GameManagement {
 
         if (this.answered === _.size(this.users)) {
             // Alert users that the round is ended and share the scores
-            clearTimeout(this.timeout);
-            this.endRound(socket);
+            // clearTimeout(this.timeout);
+            // this.endRound(socket);
             // End of the game if this was the last question
             if (++this.currentRound === _.size(this.game.quiz.questions)) {
                 console.log('[' + this.game._id+ '] : game end');
