@@ -42,4 +42,10 @@ router.get('/:id', function(req, res, next) {
 });
 
 
+
+// Todo : supprimer (test socket)
+router.get('/test/socket', function(req, res, next) {
+    res.render('test_socket');
+});
+
 module.exports = router;
