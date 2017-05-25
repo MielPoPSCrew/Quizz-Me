@@ -1,38 +1,65 @@
-<li>
-    <div class="collapsible-header"><span class="quizz-question-id">#{{ quizz_answer_id }} </span>- {{ quiz.question | truncate(50)}}</div>
+<li class="question-item">
+    <div class="collapsible-header"><span class="quizz-question-id" style="padding-right: 1em;"></span></div>
     <div class="collapsible-body">
         <div class="row">
             <form class="col s12">
+
+                <!-- question -->
                 <div class="row">
                     <div class="input-field col s12">
-                        <input placeholder="" id="question_{{ quizz_answer_id }}" type="text" class="validate" value="{{ quiz.question }}">
-                        <label for="question_{{ quizz_answer_id }}">Question</label>
+                        <input placeholder="" type="text" class="validate question-name" value="">
+                        <label>Question</label>
                     </div>
                 </div>
 
-                {%  for choice in quiz.choices %}
-                    <div class="row">
-                        <div class="input-field col s10">
-                            <input placeholder="" id="question_{{ quizz_answer_id }}_choice_{{ loop.index }}" type="text" class="validate" value="{{ choice }}">
-                            <label for="question_{{ quizz_answer_id }}_choice_{{ loop.index }}">Réponse {{ loop.index }}</label>
-                        </div>
-                        <p class="col s2">
-                            <input name="question_{{ quizz_answer_id }}_answer" type="radio" id="question_{{ quizz_answer_id }}_answer_{{ loop.index }}" {% if quiz.answer == loop.index %}checked{% endif %}/>
-                            <label for="question_{{ quizz_answer_id }}_answer_{{ loop.index }}"></label>
-                        </p>
+                <!-- answer 1 -->
+                <div class="row">
+                    <div class="input-field col s10">
+                        <input placeholder="" type="text" class="validate answer" value="">
+                        <label>Réponse 1</label>
                     </div>
-                {% endfor %}
+                    <p class="col s2">
+                        <input name="correctanswer" type="radio" value="0" id="" checked/>
+                        <label for="" ></label>
+                    </p>
+                </div>
 
+                <!-- answer 2 -->
+                <div class="row">
+                    <div class="input-field col s10">
+                        <input placeholder="" type="text" class="validate answer" value="">
+                        <label>Réponse 2</label>
+                    </div>
+                    <p class="col s2">
+                        <input name="correctanswer" type="radio" value="1" id=""/>
+                        <label for="" ></label>
+                    </p>
+                </div>
+
+                <!-- answer 3 -->
+                <div class="row">
+                    <div class="input-field col s10">
+                        <input placeholder="" type="text" class="validate answer" value="">
+                        <label>Réponse 3</label>
+                    </div>
+                    <p class="col s2">
+                        <input name="correctanswer" type="radio" value="2" id=""/>
+                        <label for="" ></label>
+                    </p>
+                </div>
+
+                <!-- info -->
                 <div class="row">
                     <div class="input-field col s12">
-                        <textarea id="question_{{ quizz_answer_id }}_info" class="materialize-textarea">{{ quiz.info }}</textarea>
-                        <label for="question_{{ quizz_answer_id }}_info">Information sur la réponse</label>
+                        <textarea class="materialize-textarea"></textarea>
+                        <label>Information sur la réponse</label>
                     </div>
                 </div>
 
+                <!-- delete button -->
                 <div class="row">
                     <div class="col s12 center-align">
-                        <button class="btn waves-effect waves-light red darken-1" id="game_create" type="submit" name="action">Supprimer la question
+                        <button class="btn waves-effect waves-light red darken-1 question-delete">Supprimer la question
                             <i class="material-icons right">delete</i>
                         </button>
                     </div>

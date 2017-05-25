@@ -13,7 +13,9 @@ router.get('/', function(req, res) {
 });
 
 router.get('/create', function(req, res, next) {
-    res.render('quizz/create');
+    DB.get('topics').find({}).then( (topics) => {
+        res.render('quizz/create', {topics});
+    });
 });
 
 module.exports = router;
