@@ -418,10 +418,11 @@ $(document).ready(function() {
         responseCycle(roundEndInfo);
     });
 
-    socket.on('gameEnd', function(scores) {
+    socket.on('gameEnd', function(gameEndInfo) {
         console.log('gameEnd');
-        scoresCycle(scores);
-        showQuestion(winnerSentence + scores[0].username + ' !');
+        console.log(gameEndInfo);
+        scoresCycle(gameEndInfo.scores);
+        showQuestion(winnerSentence + gameEndInfo.scores[0].username + ' !');
     });
 
     socket.on('newGameMaster', function(username) {
