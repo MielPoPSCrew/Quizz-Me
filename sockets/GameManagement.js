@@ -52,6 +52,7 @@ class GameManagement {
                       .then((users) => {
                           self.game.loadGameFromMongo(game, quiz, users);
                           self.initialized = true;
+                          console.log('[' + self.game._id+ '] : initialized');
                           this.userJoin(socket, username);
                       });
                 });
@@ -96,12 +97,15 @@ class GameManagement {
             throw new Error('Your are not the admin of the game');
         }
 
+        console.log('[' + this.game._id+ '] : game begin');
+
         // Alert users that the game is starting
-        socket.broadcast.emit('gameStart');
+        socket.in(this.game._id).emit('gameStart');
         socket.emit('gameStart');
 
         // Start the first round after 5 sec
-        _.delay(this.startRound, 5000, socket);
+        //_.delay(this.startRound, 5000, socket);
+        this.startRound(socket);
     }
 
     /**
@@ -117,8 +121,11 @@ class GameManagement {
         this.rounds[this.currentRound].push({username, answer, "time": new Date() - this.timer});
         this.scores[username] += _.size(this.users) - this.answered++;
 
+        console.log('[' + this.game._id+ '] : received answer from' + username + ' : ' + answer);
+
         // Alert users that the user answer the question
-        socket.broadcast.emit("userAnswer", {username});
+        socket.in(this.game._id).emit("userAnswer", {username});
+        socket.emit("userAnswer", {username});
 
         if (this.answered === _.size(this.users)) {
             // Alert users that the round is ended and share the scores
@@ -126,9 +133,12 @@ class GameManagement {
             this.endRound(socket);
             // End of the game if this was the last question
             if (++this.currentRound === _.size(this.game.quiz.questions)) {
+                console.log('[' + this.game._id+ '] : game end');
+                socket.in(this.game._id)("gameEnd");
                 socket.emit("gameEnd");
             } else {
                 // Start the new round
+                console.log('[' + this.game._id+ '] : new round');
                 this.startRound(socket);
             }
         }
@@ -169,7 +179,9 @@ class GameManagement {
               self.scores[username] = 0;
 
               // Send the event to all the users in the room
-              console.log('ROOM=' + this.game._id)
+
+              console.log('[' + this.game._id+ '] : ' + username + ' join the game');
+
               socket.in(this.game._id).emit("userEnterInTheGame", {"users": self.users});
               socket.emit("userEnterInTheGame", {"users": self.users});
 
@@ -191,14 +203,15 @@ class GameManagement {
      * @return {undefined}
      */
     startRound (socket) {
-        // console.log(socket);
         const self = this;
 
-        console.log(this);
+        //console.log(this);
 
         this.answered = 0;
         this.timer    = new Date();
-        this.timeout  = _.delay(this.endRound, 10000, socket);
+        this.timeout  = _.delay(this.endRound, 10000, socket, this);
+
+        console.log('[' + this.game._id+ '] : starting round ' + self.currentRound);
 
         socket.in(this.game._id).emit("roundStart", {
             "roundNumber": self.currentRound,
@@ -219,17 +232,19 @@ class GameManagement {
      *
      * @return {undefined}
      */
-    endRound (socket) {
+    endRound (socket, gameManagement) {
+        const self = gameManagement;
+        console.log('[' + self.game._id+ '] : ending round ' + self.currentRound);
         // Alert users that the round is ended and share the scores
-        socket.in(this.game._id).emit("roundEnd", {
-            "scores"    : this.scores,
-            "goodAnswer": this.game.quiz.questions[this.currentRound].answer,
-            "answerInfo": this.game.quiz.questions[this.currentRound].info
+        socket.in(self.game._id).emit("roundEnd", {
+            "scores"    : self.scores,
+            "goodAnswer": self.game.quiz.questions[self.currentRound].answer,
+            "answerInfo": self.game.quiz.questions[self.currentRound].info
         });
         socket.emit("roundEnd", {
-            "scores"    : this.scores,
-            "goodAnswer": this.game.quiz.questions[this.currentRound].answer,
-            "answerInfo": this.game.quiz.questions[this.currentRound].info
+            "scores"    : self.scores,
+            "goodAnswer": self.game.quiz.questions[self.currentRound].answer,
+            "answerInfo": self.game.quiz.questions[self.currentRound].info
         });
     }
 }

@@ -30,10 +30,8 @@ module.exports = (io) => {
         }
 
         // Séparation des parties
-        console.log("JOIN=" + gameId)
         socket.join(gameId);
 
-        console.log(getUsernameFromSocket(socket) + ' connected');
         try {
             game.userConnect(socket, getUsernameFromSocket(socket), socket.handshake.query.gameId);
         } catch (e) {
@@ -41,7 +39,6 @@ module.exports = (io) => {
         }
 
         socket.on('launchGame', (data) => {
-            console.log("launchGame");
             try {
                 game.launchGame(socket, data.username);
             } catch (e) {
