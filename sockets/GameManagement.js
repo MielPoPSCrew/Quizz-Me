@@ -209,7 +209,7 @@ class GameManagement {
 
         this.answered = 0;
         this.timer    = new Date();
-        this.timeout  = _.delay(this.endRound, 10000, socket, this);
+        this.timeout  = _.delay(this.endRound, 13000, socket, this);
 
         console.log('[' + this.game._id+ '] : starting round ' + self.currentRound);
 

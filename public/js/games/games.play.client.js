@@ -228,13 +228,13 @@ $(document).ready(function() {
     function showAnswers(answers) {
         hideOrShowElement('.answers .answer', 'show');
         hideOrShowElement('.answers .answer .text.editable', 'show');
-        $('.answers .ans1 .answer-content .editable').html(answers[0].text);
-        $('.answers .ans2 .answer-content .editable').html(answers[1].text);
-        $('.answers .ans3 .answer-content .editable').html(answers[2].text);
+        $('.answers .ans1 .answer-content .editable').html(answers[0]);
+        $('.answers .ans2 .answer-content .editable').html(answers[1]);
+        $('.answers .ans3 .answer-content .editable').html(answers[2]);
 
-        $('.response.res1 .response-content .editable').html(answers[0].text);
-        $('.response.res2 .response-content .editable').html(answers[1].text);
-        $('.response.res3 .response-content .editable').html(answers[2].text);
+        $('.response.res1 .response-content .editable').html(answers[0]);
+        $('.response.res2 .response-content .editable').html(answers[1]);
+        $('.response.res3 .response-content .editable').html(answers[2]);
 
         hideOrShowElement('.answers .nbAnswers .nbaContent', 'show');
     }
@@ -346,7 +346,7 @@ $(document).ready(function() {
                               '<span class="editable circle">' + i + '</span>' +
                             '</div>' +
                             '<div class="col s6 name">' +
-                                '<span class="editable">' + players[i-1].name + '</span>' +
+                                '<span class="editable">' + players[i-1].username + '</span>' +
                             '</div>' +
                             '<div class="col s2 points">' +
                                 '<span class="editable">' + players[i-1].score + ' ' + p + '</span>' +
@@ -399,6 +399,7 @@ $(document).ready(function() {
     // When round start
     socket.on('roundStart', function(round) {
         console.log('roudStart');
+        console.log(round);
         questionCycle(round);
     });
 
