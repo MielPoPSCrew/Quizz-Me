@@ -1,12 +1,12 @@
 /* global DB */
 
-import Game from './Game';
-import _ from 'lodash-es';
+const Game = require('./Game'),
+      _    = require('lodash');
 
 /**
  * Game session handle
  */
-export default class GameManagement {
+class GameManagement {
     constructor () {
         this.game         = new Game();
         this.initialized  = false;
@@ -213,3 +213,5 @@ export default class GameManagement {
         });
     }
 }
+
+module.exports = GameManagement;

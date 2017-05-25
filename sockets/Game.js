@@ -1,4 +1,4 @@
-import _ from 'lodash-es';
+const _ = require('lodash');
 
 /**
  * @typedef {Object} Game
@@ -60,7 +60,7 @@ import _ from 'lodash-es';
 /**
  * Game object containing all the game information
  */
-export default class Game {
+class Game {
     /**
      * Constructor
      */
@@ -114,3 +114,5 @@ export default class Game {
         }
     }
 }
+
+module.exports = Game;

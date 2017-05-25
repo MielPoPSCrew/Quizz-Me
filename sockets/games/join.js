@@ -1,4 +1,4 @@
-import GameManagement from '../GameManagement';
+const GameManagement = require('../GameManagement');
 
 module.exports = (io) => {
     const gameManagement = new GameManagement();
