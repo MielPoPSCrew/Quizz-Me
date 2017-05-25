@@ -112,12 +112,22 @@
                 </div>
             </div>
             <div class="content-block">
-
-                    <div class="center-align">
-                        <button class="btn waves-effect waves-light" id="game_create" type="submit" name="action">Lancer la partie !
-                            <i class="material-icons right">send</i>
-                        </button>
+                <div class="row error-block valign-wrapper hide">
+                    <div class="col s1">
+                        <i class="material-icons">report_problem</i>
                     </div>
+                    <div class="col s11" id="form_errors">
+                        <ul>
+                        </ul>
+                    </div>
+
+                </div>
+
+                <div class="center-align">
+                    <button class="btn waves-effect waves-light" id="game_create" type="submit" name="action">Lancer la partie !
+                        <i class="material-icons right">send</i>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -199,8 +209,17 @@
                     window.location.href = "/games/"+res;
                 },
                 error: (res, status, err) => {
-                    console.log(err);
-                    console.log(res);
+
+                    var errors = JSON.parse(res.responseText);
+                    console.log(errors.messages);
+
+                    $('#form_errors ul').empty();
+
+                    for (var i = 0, len = errors.messages.length; i < len; i++) {
+                        $('#form_errors ul').append('<li>' + errors.messages[i] +' </li>')
+                    }
+
+                    $('.error-block').removeClass('hide');
                 }
             })
 
