@@ -50,11 +50,11 @@
                     <form class="col s12">
                         <div class="row">
                             <div class="input-field col s12">
-                                <input placeholder="" id="game_quiz_name" type="text" class="" readonly>
+                                <input placeholder="" id="game_quiz_name" type="text" class="" value="{{ selected_quiz.name }}" readonly>
                                 <label for="game_quiz">Quiz séléctionné</label>
                             </div>
 
-                            <input type="hidden" id="game_quiz_id" val=""/>
+                            <input type="hidden" id="game_quiz_id" value="{{ selected_quiz._id }}"/>
                         </div>
 
                         <div class="row">
