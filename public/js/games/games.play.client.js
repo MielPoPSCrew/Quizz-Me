@@ -34,7 +34,6 @@ $(document).ready(function() {
 
     // USEFUL VARS
     var isQuestionTime = false;
-    var isCreator = true;
     var nbPlayers = 0;
 
 
@@ -135,12 +134,22 @@ $(document).ready(function() {
     }
 
     function launchGame() {
-      if (isCreator) {
+      if (isCreator()) {
         console.log("Send Launch game");
         socket.emit('launchGame', { username: username });
       }
 
       else console.log("You are not the creator tabarnak !");
+    }
+
+    function isCreator() {
+        console.log(creator === username);
+        return creator === username;
+    }
+
+    function updateCreator(username) {
+        creator = username;
+        showLaunchButton();
     }
 
 
@@ -357,7 +366,7 @@ $(document).ready(function() {
     }
 
     function showLaunchButton() {
-        if (isCreator) hideOrShowElement('.question .launch-button', 'show');
+        if (isCreator()) hideOrShowElement('.question .launch-button', 'show');
     }
 
     init();
@@ -406,6 +415,10 @@ $(document).ready(function() {
         console.log('gameEnd');
         scoresCycle(scores);
         showQuestion(winnerSentence + scores[0].username + ' !');
+    });
+
+    socket.on('newGameMaster', function(username) {
+        updateCreator(username);
     });
 
     socket.on('error', function(error) {
