@@ -242,8 +242,9 @@ $(document).ready(function() {
     function sendAnswer(answerId) {
         // TODO send answerId to server
         if (isQuestionTime) {
-            console.log('Send answer [id] : ', answerId);
-            socket.emit('sendAnswer', { myId: username, answerId: answerId });
+            var indexOfAnswer = (answerId-1);
+            console.log('Send answer [id] : ', indexOfAnswer);
+            socket.emit('sendAnswer', { myId: username, answerId: indexOfAnswer });
         }
     }
 
