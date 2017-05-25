@@ -2,7 +2,10 @@ $(document).ready(function() {
 
     // SOCKET
     var gameId = window.location.pathname.split('/')[2];
-    var username = $('.username-hidden').html();
+    var creator = $('#game-information').data('creator');
+    var username = $('#game-information').data('player');
+    console.log("creator=" + creator);
+    console.log("username=" + username);
     var socket = io.connect('http://localhost:8737', { query : 'gameId=' + gameId + '&username=' + username });
 
 

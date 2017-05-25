@@ -46,7 +46,9 @@ router.get('/:id', function(req, res, next) {
             } else if(!gameInfo.opened) {
                 res.render('error', {error:"Cette partie n'est pas ouverte ou est terminée."})
             } else {
-                DB.get('users').find({_id:gameInfo.creator}).then( (creatorInfo) => {
+                DB.get('users').findOne({_id:gameInfo.creator}).then( (creatorInfo) => {
+                    console.log("creator=" + creatorInfo);
+                    console.log(creatorInfo);
                     res.render('games/games', { username: req.cookies.username, creator: creatorInfo.username });
                 });
             }
