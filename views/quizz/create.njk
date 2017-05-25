@@ -26,7 +26,7 @@
             <div class="content-block">
                 <div class="row">
                     <div class="col s12 right-align">
-                        <a href="/quizz/create" class="waves-effect waves-teal btn-flat add-question">Ajouter une question</a>
+                        <a href="#" class="waves-effect waves-teal btn-flat add-question">Ajouter une question</a>
                     </div>
                 </div>
 
@@ -43,9 +43,13 @@
                     </div>
                 </div>
 
+                <div id="quiz-item-template" class="hiddendiv">
+                    {%  include 'templates/quizz.create.item.njk' %}
+                </div>
+
                 <div class="row">
                     <div class="col s12 right-align">
-                        <a href="/quizz/create" class="waves-effect waves-teal btn-flat add-question">Ajouter une question</a>
+                        <a href="#" class="waves-effect waves-teal btn-flat add-question">Ajouter une question</a>
                     </div>
                 </div>
 
@@ -69,5 +73,122 @@
     {{ super }}
     <script>
         $('#search_quizz_topic').material_select();
+
+        function updateQuestionId() {
+            $('.quizz-question-id').each(function(){
+                $(this).html('#'+Number($(this).parent().parent().index() + 1));
+            });
+            $('#question-list').find('[type=radio]').each(function(){
+                var qid = $(this).parents('li').find('.quizz-question-id').first().html().substring(1);
+                var id = 'answer-'+$(this).attr('value')+'-'+qid;
+                $(this).attr('id', id);
+                $(this).next().attr('for', id);
+            });
+        }
+
+        function collectAndCheckData(){
+            var data = {};
+            var error = [];
+
+            // game name
+            var name = $('#game_name').val();
+            if(name.trim() === ""){
+                error.push('name');
+            }
+            else{
+                data.name = name;
+            }
+
+            // game topic
+            var topic = $('#search_quizz_topic').val();
+            data.topic = topic;
+
+            // game questions
+            data.questions = [];
+            $('#question-list').find('li').each( function(){
+                var question = {};
+
+                var question_name = $(this).find('.question-name').first().val();
+                if(question_name.trim() === ""){
+                    error.push($(this).index()+"-name");
+                }
+                else {
+                    question.question = question_name;
+                }
+
+                question.choices = [];
+
+                var index = 0;
+                $(this).find('.answer').each(function(){
+                    if($(this).val().trim() === "")
+                        error.push($(this).index()+"answer-"+index);
+                    else{
+                        question.choices.push($(this).val().trim());
+                    }
+                    index++;
+                });
+
+                question.answer = Number($(this).find('[type=radio]:checked').first().val());
+
+                question.info = $(this).find('textarea').first().val().trim();
+
+                data.questions.push(question);
+
+            });
+
+            return error.length === 0 ? data : {error};
+        }
+
+        // add a new question
+        $('.add-question').on('click', function(e){
+            $('#quiz-item-template').clone().removeClass('hiddendiv').children().first().unwrap().appendTo("#question-list");
+            updateQuestionId();
+            e.preventDefault();
+        });
+
+        // bind clic event on every element with class question-delete
+        // under #question-list (manage dynamic creation)
+        $('#question-list').on('click', '.question-delete', function(e){
+            $(this).parents('li').remove();
+            updateQuestionId();
+            e.preventDefault();
+        });
+
+        // When question is entered, copy the question into the
+        // div header
+        $('#question-list').on('change keyup', '.question-name', function(e){
+            var node = $(this).parents('.question-item').children().first();
+            node.contents().filter(function(){
+                return this.nodeType === 3;
+            }).remove();
+            node.append($(this).val());
+            e.preventDefault();
+        });
+
+        $('#game_create').on('click', function(){
+            var data = collectAndCheckData();
+            if(data.error === undefined){
+                console.log("ISOK : " + JSON.stringify(data));
+                $.ajax({
+                    url: '/api/1.0/quiz/create',
+                    method: 'POST',
+                    data: JSON.stringify(data),
+                    contentType: 'application/json',
+                    success : function(res, status){
+                        console.log('success');
+                    },
+                    error : function(res, status, error){
+                        console.log(res);
+                    }
+                })
+            }
+            else{
+                console.log("There was an or multiple error(s) : " + JSON.stringify(data));
+            }
+        });
+
+
+        updateQuestionId();
+
     </script>
 {% endblock %}

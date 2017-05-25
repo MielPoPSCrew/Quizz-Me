@@ -1,19 +1,7 @@
 const router = require('express').Router();
 const _ = require('lodash');
 const monk = require('monk');
-
-function populateQuiz(quizz, length, it, cb){
-    if(it == length)
-        cb();
-    else  {
-        DB.get('topics').find({_id: quizz[it].topic}).then((t) => {
-            quizz[it].topic = {};
-            quizz[it].topic.id = t[0]._id;
-            quizz[it].topic.name = t[0].name;
-            populateQuiz(quizz, length, it+1, cb);
-        });
-    }
-}
+const population = require('../../../../utilities/population');
 
 function manageQueryCreation(params, keys, it, query, cb){
     if(it === keys.length)
@@ -131,7 +119,7 @@ router.get('/quiz', (req, res) => {
     }
     console.log(query);
     DB.get('quiz').find(query, {fields:{questions:0}}).then( (result) => {
-        populateQuiz(result, result.length, 0, ()=>{
+        population.populateQuizWithTopics(result, ()=>{
             res.json(result);
             res.status(200);
         });

@@ -1,39 +1,9 @@
 const router = require('express').Router();
-
-function populateQuiz(quiz, length, it, cb){
-    if(it == length)
-        cb();
-    else  {
-        DB.get('topics').find({_id: quiz[it].topic}).then((t) => {
-            quiz[it].topic = {};
-            quiz[it].topic.id = t[0]._id;
-            quiz[it].topic.name = t[0].name;
-            populateQuiz(quiz, length, it+1, cb);
-        });
-    }
-}
-
-function populateGame(games, length, it, cb){
-    if(it == length)
-        cb();
-    else  {
-        DB.get('quiz').find({_id: games[it].quiz}).then((q) => {
-            games[it].quiz = {};
-            games[it].quiz.id = q[0]._id;
-            games[it].quiz.name = q[0].name;
-            games[it].quiz.topic = q[0].topic;
-            DB.get('topics').find({_id: q[0].topic}).then( (t) =>{
-                games[it].quiz.topic = t[0].name;
-                populateGame(games, length, it+1, cb);
-            })
-        });
-    }
-}
-
+const population = require('../../utilities/population');
 
 router.get('/', function(req, res, next) {
     DB.get('games').find({opened: true, private: false}, {sort : { created : 1}}).then((games) => {
-        populateGame(games, games.length, 0, () => {
+        population.populateGamesWithQuiz(games,  () => {
             DB.get('topics').find({}).then((topics)=>{
                 topics.unshift({_id:-1, name: "Tous"});
                 res.render('games/join', {games, topics});
@@ -43,23 +13,33 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/create', function(req, res) {
-    DB.get('quiz').find({},{fields:{questions:0}}).then( (quiz) => {
-        populateQuiz(quiz, quiz.length, 0, () =>{
-            DB.get('topics').find({}).then( (topics) =>{
-                topics.unshift({_id:-1, name: "Tous"});
-                res.render('games/create', {quizz:quiz, topics});
+    let quizId = req.query.quiz ;
+
+    // Retrieved information on selected quiz
+    DB.get('quiz').findOne({_id: quizId}).then((quizResult) => {
+        let selected_quiz;
+        if (quizResult && quizResult.length !== 0) {
+            selected_quiz = {
+                _id : quizResult._id,
+                name : quizResult.name
+            }
+        }
+
+        // Retrieved existing quizz
+        DB.get('quiz').find({},{fields:{questions:0}}).then( (quiz) => {
+            population.populateQuizWithTopics(quiz, () =>{
+                DB.get('topics').find({}).then( (topics) =>{
+                    topics.unshift({_id:-1, name: "Tous"});
+                    res.render('games/create', {quizz:quiz, topics, selected_quiz});
+                });
             });
         });
     });
 });
 
-/*
- * Get the list of available games
- */
 router.get('/:id', function(req, res, next) {
     res.render('games/games');
 });
-
 
 
 module.exports = router;

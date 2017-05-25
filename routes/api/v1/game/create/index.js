@@ -32,27 +32,37 @@ router.post('/', (req, res) => {
         res.json(error);
     }
     else {
-        DB.get('quiz').find({_id: data.quiz_id}).then((quiz) => {
-            if (quiz.length === 0) {
-                error.messages.push("Quiz does not exist");
-                res.json(error);
-            } else {
-                let game = {
-                    name: data.name,
-                    max_player: data.nb_max_user,
-                    private: data.is_private === 'true',
-                    opened: true,
-                    quiz: req.body.quiz_id,
-                    users: [],
-                    creator: req.cookies.username
-                };
-
-                DB.get('games').insert(game).then((game_created) => {
-                    success = game_created._id;
-                    res.json(success);
-                }).catch(console.error);
+        DB.get('users').find({username:req.cookies.username}).then( (u) => {
+            if(u.length < 1){
+                res.statusCode = 400;
+                res.json({error: {messages: ['Unknown user']}});
             }
-        })
+            else {
+                let user = u[0]._id;
+
+                DB.get('quiz').find({_id: data.quiz_id}).then((quiz) => {
+                    if (quiz.length === 0) {
+                        error.messages.push("Quiz does not exist");
+                        res.json(error);
+                    } else {
+                        let game = {
+                            name: data.name,
+                            max_player: data.nb_max_user,
+                            private: data.is_private === 'true',
+                            opened: true,
+                            quiz: monk.id(data.quiz_id),
+                            users: [],
+                            creator: user
+                        };
+
+                        DB.get('games').insert(game).then((game_created) => {
+                            success = game_created._id;
+                            res.json(success);
+                        }).catch(console.error);
+                    }
+                })
+            }
+        });
     }
 });
 

@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const population = require('../utilities/population');
 
 router.use('/games', require('./games'));
 
@@ -6,22 +7,6 @@ router.use('/quizz', require('./quizz'));
 
 router.use('/api', require('./api'));
 
-function populateGame(games, length, it, cb){
-    if(it == length)
-        cb();
-    else  {
-        DB.get('quiz').find({_id: games[it].quiz}).then((q) => {
-            games[it].quiz = {};
-            games[it].quiz.id = q[0]._id;
-            games[it].quiz.name = q[0].name;
-            games[it].quiz.topic = q[0].topic;
-            DB.get('topics').find({_id: q[0].topic}).then( (t) =>{
-                games[it].quiz.topic = t[0].name;
-                populateGame(games, length, it+1, cb);
-            })
-        });
-    }
-}
 
 router.get('/', function(req, res) {
 
@@ -29,18 +14,22 @@ router.get('/', function(req, res) {
 
     // retrieve current user stats
     DB.get('users').find({username}, {fields:{"_id": 0}}).then( (u) => {
-        if(u.length !== 1)
-            res.status(500);
+        if (u.length !== 1){
+            res.statusCode = 500;
+            res.send("ERROR");
+        }
         else{
             let user = u[0];
 
             // retrieves the most recent games and populates the field "quiz" by quiz info
             DB.get('games').find({opened: true, private: false}, {sort : { created : 1}}).then((games) => {
 
-                populateGame(games, games.length, 0, () =>{
+                population.populateGamesWithQuiz(games, () =>{
                     // retrieves the most recent quizz
-                    DB.get('quiz').find({}, { created: 1, limit : 10}).then( (quiz) => {
-                        res.render('index', {user, games, quiz})
+                    DB.get('quiz').find({}, { created: 1, limit : 10, fields:{questions:0}}).then( (quiz) => {
+                        population.populateQuizWithTopics(quiz, ()=>{
+                            res.render('index', {user, games, quiz})
+                        });
                     });
                 });
 
