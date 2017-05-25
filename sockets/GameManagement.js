@@ -132,15 +132,7 @@ class GameManagement {
             // clearTimeout(this.timeout);
             // this.endRound(socket);
             // End of the game if this was the last question
-            if (++this.currentRound === _.size(this.game.quiz.questions)) {
-                console.log('[' + this.game._id+ '] : game end');
-                socket.in(this.game._id)("gameEnd");
-                socket.emit("gameEnd");
-            } else {
-                // Start the new round
-                console.log('[' + this.game._id+ '] : new round');
-                this.startRound(socket);
-            }
+
         }
     }
 
@@ -211,15 +203,15 @@ class GameManagement {
         this.timer    = new Date();
         this.timeout  = _.delay(this.endRound, 13000, socket, this);
 
-        console.log('[' + this.game._id+ '] : starting round ' + self.currentRound);
+        console.log('[' + this.game._id+ '] : starting round ' + (self.currentRound + 1));
 
         socket.in(this.game._id).emit("roundStart", {
-            "roundNumber": self.currentRound,
+            "roundNumber": (self.currentRound + 1),
             "question"   : self.game.quiz.questions[self.currentRound].question,
             "choices"    : self.game.quiz.questions[self.currentRound].choices
         });
         socket.emit("roundStart", {
-            "roundNumber": self.currentRound,
+            "roundNumber": (self.currentRound + 1),
             "question"   : self.game.quiz.questions[self.currentRound].question,
             "choices"    : self.game.quiz.questions[self.currentRound].choices
         });
@@ -234,8 +226,8 @@ class GameManagement {
      */
     endRound (socket, gameManagement) {
         const self = gameManagement;
-        console.log('[' + self.game._id+ '] : ending round ' + self.currentRound);
-        console.log(self.scores);
+        console.log('[' + self.game._id+ '] : ending round ' + (self.currentRound + 1));
+
         // Alert users that the round is ended and share the scores
 
         var cleanScore = [];
@@ -245,8 +237,6 @@ class GameManagement {
                 score : value
             })
         });
-
-        console.log(cleanScore);
 
         socket.in(self.game._id).emit("roundEnd", {
             "scores"    : cleanScore,
@@ -258,6 +248,18 @@ class GameManagement {
             "goodAnswer": self.game.quiz.questions[self.currentRound].answer,
             "answerInfo": self.game.quiz.questions[self.currentRound].info
         });
+
+        self.currentRound++;
+
+        if ((self.currentRound) >= _.size(self.game.quiz.questions)) {
+            console.log('[' + self.game._id+ '] : game end');
+            socket.in(self.game._id).emit("gameEnd");
+            socket.emit("gameEnd");
+        } else {
+            // Start the new round
+            console.log('[' + self.game._id+ '] : new round');
+            self.startRound(socket);
+        }
     }
 }
 
