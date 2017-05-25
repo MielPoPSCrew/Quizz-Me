@@ -26,10 +26,10 @@ $(document).ready(function() {
 
 
     // SAMPLES
-    var questionSample = { label: 'Qu\'est-ce qui est rond et marron ?', nb_question: 1, answers: [{ id : 0, text: 'Un marron !' }, { id : 1, text: 'Euh, un rond marron ?' }, {id : 2, text: 'C\'est pas faux.' }] };
-    var gameSample = { name : 'Ma première game', nb_players : 5, quiz : 'Vais-je avoir mon année ?', nbQuestions: 15, gameId : 'YH25GI78'  };
-    var responseSample = { gagnant: "Clément", place: 2, info: 'En effet vous êtes un gland...'};
-    var playersSample = [{ name: "Léo", pts: 5 }, { name: "Thomas", pts: 3 }, { name: "Steve", pts: 2 }, { name: "Romain", pts: 1 }, { name: "Clément", pts: 0 }];
+    // var questionSample = { label: 'Qu\'est-ce qui est rond et marron ?', nb_question: 1, answers: [{ id : 0, text: 'Un marron !' }, { id : 1, text: 'Euh, un rond marron ?' }, {id : 2, text: 'C\'est pas faux.' }] };
+    // var gameSample = { name : 'Ma première game', nb_players : 5, quiz : 'Vais-je avoir mon année ?', nbQuestions: 15, gameId : 'YH25GI78'  };
+    // var responseSample = { gagnant: "Clément", place: 2, info: 'En effet vous êtes un gland...'};
+    // var playersSample = [{ name: "Léo", pts: 5 }, { name: "Thomas", pts: 3 }, { name: "Steve", pts: 2 }, { name: "Romain", pts: 1 }, { name: "Clément", pts: 0 }];
 
 
     // USEFUL VARS
@@ -41,6 +41,15 @@ $(document).ready(function() {
     $('.answers .ans1 .answer-content').on('click', function() { sendAnswer(1) });
     $('.answers .ans2 .answer-content').on('click', function() { sendAnswer(2) });
     $('.answers .ans3 .answer-content').on('click', function() { sendAnswer(3) });
+
+    $(document).on('keypress', function(e) {
+        var key = (e.which-32);
+        switch(key) {
+            case 49: case 50: case 51: case 52: case 65: case 90: case 69: case 82: case 81: case 83: case 68: case 70: case 87: case 88: case 67: case 86: sendAnswer(1); break;
+            case 53: case 54: case 55: case 56: case 84: case 89: case 85: case 75: case 71: case 72: case 74: case 75: case 66: case 78: case 188: case 190: sendAnswer(2); break;
+            case 57: case 48: case 219: case 187: case 79: case 80: case 221: case 186: case 76: case 77: case 192: case 220: case 191: case 223: case 16: sendAnswer(3); break;
+        }
+    });
 
     $('.question .launch-button').on('click', function() { launchGame() });
 
