@@ -46,9 +46,9 @@ module.exports = (io) => {
             }
         });
 
-        socket.on('sendAnswser', (data) => {
+        socket.on('sendAnswer', (data) => {
             try {
-                game.receiveAnswer(socket, data.username, data.answer);
+                game.receiveAnswer(socket, game, data.answerId, data.answerId );
             } catch (e) {
                 socket.emit("error", e);
             }

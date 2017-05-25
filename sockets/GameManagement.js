@@ -113,23 +113,29 @@ class GameManagement {
      * @param {Object} socket - User socket object
      * @param {string} username - The new user name
      * @param {number} answer - The user answer index
+     * @param {number} answer - The user answer index
      *
      * @return {undefined}
      */
-    receiveAnswer (socket, username, answer) {
-        this.rounds[this.currentRound].push({username, answer, "time": new Date() - this.timer});
-        this.scores[username] += _.size(this.users) - this.answered++;
+    receiveAnswer (socket, gameManager, username, answer) {
 
-        console.log('[' + this.game._id+ '] : received answer from' + username + ' : ' + answer);
+        const self = gameManager;
+
+
+        self.rounds[self.currentRound] = {username, answer, "time": new Date() - self.timer};
+        console.log(self.rounds[self.currentRound]);
+        self.scores[username] += _.size(self.users) - self.answered++;
+
+        console.log('[' + self.game._id+ '] : received answer from' + username + ' : ' + answer);
 
         // Alert users that the user answer the question
-        socket.in(this.game._id).emit("userAnswer", {username});
+        socket.in(self.game._id).emit("userAnswer", {username});
         socket.emit("userAnswer", {username});
 
-        if (this.answered === _.size(this.users)) {
+        if (self.answered === _.size(self.users)) {
             // Alert users that the round is ended and share the scores
-            // clearTimeout(this.timeout);
-            // this.endRound(socket);
+            // clearTimeout(self.timeout);
+            // self.endRound(socket);
             // End of the game if this was the last question
 
         }
