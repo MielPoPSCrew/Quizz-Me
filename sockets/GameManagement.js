@@ -104,8 +104,7 @@ class GameManagement {
         socket.emit('gameStart', {nbPlayers:_.size(this.users)});
 
         // Start the first round after 5 sec
-        //_.delay(this.startRound, 5000, socket);
-        this.startRound(socket);
+        _.delay(this.startRound, 5000, socket, this);
     }
 
     /**
@@ -194,18 +193,18 @@ class GameManagement {
      *
      * @return {undefined}
      */
-    startRound (socket) {
-        const self = this;
+    startRound (socket, gameManager) {
+        const self = gameManager;
 
         //console.log(this);
 
-        this.answered = 0;
-        this.timer    = new Date();
-        this.timeout  = _.delay(this.endRound, 13000, socket, this);
+        self.answered = 0;
+        self.timer    = new Date();
+        self.timeout  = _.delay(self.endRound, 13000, socket, self);
 
-        console.log('[' + this.game._id+ '] : starting round ' + (self.currentRound + 1));
+        console.log('[' + self.game._id+ '] : starting round ' + (self.currentRound + 1));
 
-        socket.in(this.game._id).emit("roundStart", {
+        socket.in(self.game._id).emit("roundStart", {
             "roundNumber": (self.currentRound + 1),
             "question"   : self.game.quiz.questions[self.currentRound].question,
             "choices"    : self.game.quiz.questions[self.currentRound].choices
@@ -258,7 +257,7 @@ class GameManagement {
         } else {
             // Start the new round
             console.log('[' + self.game._id+ '] : new round');
-            self.startRound(socket);
+            _.delay(self.startRound, 5000, socket, self);
         }
     }
 }
