@@ -112,7 +112,7 @@ class GameManagement {
         socket.emit('gameStart', {"nbPlayers": _.size(this.users)});
 
         // Start the first round after 5 sec
-        _.delay(this.startRound, 5000, socket, username);
+        _.delay(_.bind(this.startRound, this, socket, username), 5000);
     }
 
     /**
@@ -125,8 +125,7 @@ class GameManagement {
      * @return {undefined}
      */
     receiveAnswer (socket, username, answer) {
-        const self = this,
-              user = _.find(self.users, {username});
+        const user = _.find(this.users, {username});
 
         // Add the answer to the round
         this.rounds[this.currentRound].push({username, answer, "time": new Date() - this.timer});
@@ -136,10 +135,12 @@ class GameManagement {
             this.scores[username]++;
             user.statistics.goodAnswers++;
 
+            console.log('DEBUG', this.rounds[this.currentRound]);
             if (_.isUndefined(_.find(
                 this.rounds[this.currentRound],
-                {"answer": this.game.quiz.questions[this.currentRound].answer}
+                {"answer": _.parseInt(this.game.quiz.questions[this.currentRound].answer)}
             ))) {
+                console.log('DEBUG: quickAnswers++');
                 this.scores[username]++;
                 user.statistics.quickAnswers++;
             }
@@ -150,10 +151,10 @@ class GameManagement {
             );
         }
 
-        console.log(`[${self.game._id}] : received answer from${username} : ${answer}`);
+        console.log(`[${this.game._id}] : received answer from${username} : ${answer}`);
 
         // Alert users that the user answer the question
-        socket.in(self.game._id).emit("userAnswer", {username});
+        socket.in(this.game._id).emit("userAnswer", {username});
         socket.emit("userAnswer", {username});
     }
 
@@ -262,7 +263,7 @@ class GameManagement {
         }
 
         this.timer                     = new Date();
-        this.timeout                   = _.delay(this.endRound, 13000, socket, username);
+        this.timeout                   = _.delay(_.bind(this.endRound, this, socket, username), 13000);
         this.rounds[this.currentRound] = [];
 
         console.log(`[${this.game._id}] : starting round ${this.currentRound + 1}`);
@@ -289,11 +290,7 @@ class GameManagement {
      * @return {undefined}
      */
     endRound (socket, username) {
-        const user = _.find(this.users, {username});
-
         console.log(`[${this.game._id}] : ending round ${this.currentRound + 1}`);
-
-        // Alert users that the round is ended and share the scores
 
         let cleanScore = [];
 
@@ -304,8 +301,20 @@ class GameManagement {
             });
         });
 
-        cleanScore = _.sortBy(cleanScore, ['score']);
+        // @todo not working: cleanScore = _.sortBy(cleanScore, ['score']);
+        cleanScore = cleanScore.sort((a, b) => {
+            if (a.score > b.score) {
+                return -1;
+            }
 
+            if (a.score < b.score) {
+                return 1;
+            }
+
+            return 0;
+        });
+
+        // Alert users that the round is ended and share the scores
         socket.in(this.game._id).emit("roundEnd", {
             "scores"    : cleanScore,
             "goodAnswer": this.game.quiz.questions[this.currentRound].answer,
@@ -336,23 +345,25 @@ class GameManagement {
                 });
             });
 
-            user.statistics.gamesTotal++;
+            _.forEach(this.users, (user) => {
+                user.statistics.gamesTotal++;
 
-            if (username === winner) {
-                user.statistics.gamesWon++;
-            }
+                if (user.username === winner) {
+                    user.statistics.gamesWon++;
+                }
 
-            DB.get('users').update(
-                {"username": user.username},
-                {"$set": {"statistics": user.statistics}}
-            );
+                DB.get('users').update(
+                    {"username": user.username},
+                    {"$set": {"statistics": user.statistics}}
+                );
+            });
 
             socket.in(this.game._id).emit("gameEnd", {"scores": cleanScore, rank, winner});
             socket.emit("gameEnd", {"scores": cleanScore, rank, winner});
         } else {
             // Start the new round
             console.log(`[${this.game._id}] : new round`);
-            _.delay(this.startRound, 5000, socket, username);
+            _.delay(_.bind(this.startRound, this, socket, username), 5000);
         }
     }
 }

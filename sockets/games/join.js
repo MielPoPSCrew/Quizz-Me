@@ -1,17 +1,4 @@
 const GameManagement = require('../GameManagement');
-const _ = require('lodash');
-
-function getUsernameFromSocket(socket) {
-    // let username = '';
-    // console.log(socket.handshake.query);
-    // _.forEach(_.split(socket.handshake.query.username, ';'), (v) => {
-    //     let tmp = _.split(v, '=');
-    //     if (tmp[0] == 'username') {
-    //         username = tmp[1];
-    //     }
-    // });
-    return socket.handshake.query.username;
-}
 
 module.exports = (io) => {
     var games = [];
@@ -35,7 +22,7 @@ module.exports = (io) => {
         socket.join(gameId);
 
         try {
-            game.userConnect(socket, getUsernameFromSocket(socket), socket.handshake.query.gameId);
+            game.userConnect(socket, socket.handshake.query.username, socket.handshake.query.gameId);
         } catch (e) {
             socket.emit("error", e);
         }
@@ -50,7 +37,7 @@ module.exports = (io) => {
 
         socket.on('sendAnswer', (data) => {
             try {
-                game.receiveAnswer(socket, game, data.myId, data.answerId );
+                game.receiveAnswer(socket, data.myId, data.answerId);
             } catch (e) {
                 socket.emit("error", e);
             }
