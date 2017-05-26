@@ -332,7 +332,7 @@ class GameManagement {
             });
 
             socket.in(self.game._id).emit("gameEnd", {scores:cleanScore, rank:rank, winner:winner});
-            socket.emit("gameEnd", {scores:cleanScore});
+            socket.emit("gameEnd", {scores:cleanScore, rank:rank, winner:winner});
         } else {
             // Start the new round
             console.log('[' + self.game._id+ '] : new round');
