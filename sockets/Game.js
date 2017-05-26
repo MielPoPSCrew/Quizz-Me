@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 const _ = require('lodash');
 
 /**
@@ -86,7 +87,8 @@ class Game {
      */
     loadGameFromMongo (gameMongoLike, quizMongoLike, usersMongoLike) {
         const self = this;
-        this._id           = gameMongoLike._id;
+
+        this._id          = gameMongoLike._id;
         this.name         = gameMongoLike.name;
         this.creator      = _.find(usersMongoLike, {"_id": gameMongoLike.creator});
         this.created      = gameMongoLike.created;
