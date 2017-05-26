@@ -93,7 +93,6 @@ $(document).ready(function() {
 
     // CYCLES FUNCTIONS
     function questionCycle(question) {
-        // TODO passer la question
         hideQuestion();
         hideResponse();
         hideAnswers();
@@ -407,7 +406,6 @@ $(document).ready(function() {
     // When enter in the room
     socket.on('gameEnter', function(info) {
         console.log('gameEnter');
-        console.log(info);
         initWaitingRoom(info);
     });
 
@@ -426,28 +424,23 @@ $(document).ready(function() {
     // When round start
     socket.on('roundStart', function(round) {
         console.log('roudStart');
-        console.log(round);
         questionCycle(round);
     });
 
     socket.on('userAnswer', function(user) {
         console.log('userAnswer');
         updateNbAnswers(parseInt($('.answers .nbAnswers .editable').text())-1);
-        // TEST TODO
         togglePlayed(user.username);
     });
 
     socket.on('roundEnd', function(roundEndInfo) {
         console.log('roundEnd');
-        console.log(roundEndInfo);
-
         scoresCycle(roundEndInfo.scores);
         responseCycle(roundEndInfo);
     });
 
     socket.on('gameEnd', function(gameEndInfo) {
         console.log('gameEnd');
-        console.log(gameEndInfo);
         scoresCycle(gameEndInfo.scores);
         showQuestion(winnerSentence + gameEndInfo.scores[0].username + ' !');
     });
@@ -456,8 +449,13 @@ $(document).ready(function() {
         updateCreator(username);
     });
 
+    socket.on('playerLeave', function(res) {
+        console.log('playerLeave');
+        generateScoreTable(res.users);
+    });
+
     socket.on('error', function(error) {
-        console.log(error);
+        console.log('[ERROR FROM SERVER] ' + error);
     });
 
 })
