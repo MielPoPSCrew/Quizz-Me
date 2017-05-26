@@ -6,7 +6,7 @@ $(document).ready(function() {
     var username = $('#game-information').data('player');
     console.log("creator=" + creator);
     console.log("username=" + username);
-    var socket = io.connect('/', { query : 'gameId=' + gameId + '&username=' + username });
+    var socket = io.connect('http://localhost:8737', { query : 'gameId=' + gameId + '&username=' + username });
 
 
     // DEFAULT VARS
@@ -149,7 +149,7 @@ $(document).ready(function() {
     }
 
     function launchGame() {
-      if (isCreator()) {
+      if (isCreator(username)) {
         console.log("Send Launch game");
         socket.emit('launchGame', { username: username });
       }
@@ -157,8 +157,8 @@ $(document).ready(function() {
       else console.log("You are not the creator tabarnak !");
     }
 
-    function isCreator() {
-        return creator === username;
+    function isCreator(us) {
+        return creator === us;
     }
 
     function updateCreator(username) {
@@ -343,9 +343,14 @@ $(document).ready(function() {
         var playerHtml = '';
 
         for (var i = 1 ; i <= players.length ; i++) {
+            var gm = isCreator(players[i-1].username) ? '<i class="small material-icons">star</i>' : '' ;
+
           playerHtml +=  '<div class="col s12 player">' +
-                            '<div class="col s2 position">' +
+                            '<div class="col s1 position">' +
                               '<span class="editable circle">  -  </span>' +
+                            '</div>' +
+                            '<div class="col s1 gamemaster">' +
+                              '<span class="editable"> ' + gm + ' </span>' +
                             '</div>' +
                             '<div class="col s6 name">' +
                                 '<span class="editable">' + players[i-1].username + '</span>' +
@@ -366,10 +371,14 @@ $(document).ready(function() {
         var playerHtml = '';
 
         for (var i = 1 ; i <= players.length ; i++) {
-          var p = players[i-1].score <= 1 ? 'point' : 'points';
+            var gm = isCreator(players[i-1].username) ? '<i class="small material-icons">star</i>' : '' ;
+            var p = players[i-1].score <= 1 ? 'point' : 'points';
           playerHtml +=  '<div class="col s12 player">' +
-                            '<div class="col s2 position">' +
+                            '<div class="col s1 position">' +
                               '<span class="editable circle">' + i + '</span>' +
+                            '</div>' +
+                            '<div class="col s1 gamemaster">' +
+                              '<span class="editable"> ' + gm + ' </span>' +
                             '</div>' +
                             '<div class="col s6 name">' +
                                 '<span class="editable">' + players[i-1].username + '</span>' +
@@ -397,7 +406,7 @@ $(document).ready(function() {
     }
 
     function showLaunchButton() {
-        if (isCreator()) hideOrShowElement('.question .launch-button', 'show');
+        if (isCreator(username)) hideOrShowElement('.question .launch-button', 'show');
     }
 
     init();
@@ -445,13 +454,17 @@ $(document).ready(function() {
         endGameCycle(gameEndInfo);
     });
 
-    socket.on('newGameMaster', function(username) {
-        updateCreator(username);
-    });
-
     socket.on('playerLeave', function(res) {
         console.log('playerLeave');
         generateScoreTable(res.users);
+    });
+
+    socket.on('gameMasterChange', function(newMaster) {
+        console.log('gameMasterChange');
+        updateCreator(newMaster.username);
+        generateScoreTable(newMaster.users);
+        hideLaunchButton();
+        showLaunchButton();
     });
 
     socket.on('error', function(error) {
