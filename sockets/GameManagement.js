@@ -103,6 +103,16 @@ class GameManagement {
 
         this.started = true;
 
+        const self = this;
+
+        // Close room
+        DB.get('games').findOne({_id: self.game._id}).then( (gameInfo) => {
+            gameInfo.opened = false;
+            DB.get('games').update(self.game._id, gameInfo).then(function () {
+                console.log('[' + self.game._id+ '] : game closed');
+            });
+        });
+
         // Alert users that the game is starting
         socket.in(this.game._id).emit('gameStart', {nbPlayers:_.size(this.users)});
         socket.emit('gameStart', {nbPlayers:_.size(this.users)});
@@ -146,7 +156,6 @@ class GameManagement {
             }
 
             DB.get('users').findOne({username:username}).then(function (findPlayer) {
-                console.log(findPlayer)
                 findPlayer.statistics.goodAnswers++;
 
                 if(quickest)
@@ -154,7 +163,6 @@ class GameManagement {
                     findPlayer.statistics.quickAnswers++;
                 }
 
-                console.log(findPlayer)
 
                 DB.get('users').update(findPlayer._id, findPlayer);
             });
@@ -193,8 +201,6 @@ class GameManagement {
                   throw new Error('User not found on the database');
               }
 
-              // console.log(this.users);
-              // console.log(user);
               if (!_.isUndefined(_.find(this.users, user))) {
                   console.log('[' + this.game._id+ '] : ' + username + ' was already in');
               }
@@ -235,7 +241,6 @@ class GameManagement {
         _.remove(this.users, function(un) {
             return un.username === username;
         });
-
         delete this.scores[username];
 
         DB.get('games').findOne({_id: self.game._id}).then( (gameInfo) => {
@@ -246,9 +251,24 @@ class GameManagement {
             DB.get('games').update(self.game._id, gameInfo);
         });
 
-        // console.log(this.scores);
-
         socket.in(this.game._id).emit('playerLeave', {'users': this.users});
+
+        if(_.isEmpty(this.users))
+        {
+            // Close room
+            DB.get('games').findOne({_id: self.game._id}).then( (gameInfo) => {
+                gameInfo.opened = false;
+                DB.get('games').update(self.game._id, gameInfo).then(function () {
+                    console.log('[' + self.game._id+ '] : game closed');
+                });
+            });
+        }
+        else if(!this.started && username == this.game.creator.username) {
+            this.game.creator = this.users[0];
+            console.log('[' + self.game._id+ '] : game master changed =' + this.game.creator.username);
+
+            socket.in(self.game._id).emit("gameMasterChange", {username:this.game.creator.username});
+        }
     }
 
     /**
@@ -261,7 +281,13 @@ class GameManagement {
     startRound (socket, gameManager, username) {
         const self = gameManager;
 
-        //console.log(this);
+        // Kill the game
+        if(_.isEmpty(self.users))
+        {
+            console.log('[' + self.game._id+ '] : game killed');
+
+            return;
+        }
 
         self.answered = 0;
         self.timer    = new Date();
@@ -303,7 +329,6 @@ class GameManagement {
             })
         });
 
-        console.log(cleanScore);
 
         socket.in(self.game._id).emit("roundEnd", {
             "scores"    : cleanScore,
@@ -335,7 +360,7 @@ class GameManagement {
             var winner = cleanScore[0].username;
 
             DB.get('users').findOne({username:username}).then(function (findPlayer) {
-                console.log(findPlayer)
+
                 findPlayer.statistics.gamesTotal++;
                 if(username == winner)
                     findPlayer.statistics.gamesWon++;
