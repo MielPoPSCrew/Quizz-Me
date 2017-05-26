@@ -130,9 +130,8 @@ $(document).ready(function() {
 
     function scoresCycle(scores) {
         updateScoresTable(scores);
-
-        // TODO PLACE AND NB POINTS
-        showQuestion(scores[0] + ' a été le plus rapide... Vous êtes ' + 2 + 'e.');
+        // TODO place à chaque round
+        // showQuestion(scores[0] + ' a été le plus rapide... Vous êtes ' + 2 + 'e.');
     }
 
     function endGameCycle(obj) {
@@ -365,19 +364,18 @@ $(document).ready(function() {
 
     function updateScoresTable(players) {
         var playerHtml = '';
-        var sortedPlayers = sortScores(players);
 
-        for (var i = 1 ; i <= sortedPlayers.length ; i++) {
-          var p = sortedPlayers[i-1].score <= 1 ? 'pt' : 'pts';
+        for (var i = 1 ; i <= players.length ; i++) {
+          var p = players[i-1].score <= 1 ? 'point' : 'points';
           playerHtml +=  '<div class="col s12 player">' +
                             '<div class="col s2 position">' +
                               '<span class="editable circle">' + i + '</span>' +
                             '</div>' +
                             '<div class="col s6 name">' +
-                                '<span class="editable">' + sortedPlayers[i-1].username + '</span>' +
+                                '<span class="editable">' + players[i-1].username + '</span>' +
                             '</div>' +
                             '<div class="col s2 points">' +
-                                '<span class="editable">' + sortedPlayers[i-1].score + ' ' + p + '</span>' +
+                                '<span class="editable">' + players[i-1].score + ' ' + p + '</span>' +
                             '</div>' +
                             '<div class="col s2 played">' +
                                 '<span class="editable">...</span>' +
@@ -386,10 +384,6 @@ $(document).ready(function() {
         }
 
         $('.players .players-table').html(playerHtml);
-    }
-
-    function sortScores(scores) {
-        return scores;
     }
 
 

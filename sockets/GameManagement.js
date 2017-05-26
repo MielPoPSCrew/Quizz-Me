@@ -328,7 +328,12 @@ class GameManagement {
                 score : value
             })
         });
-        _.sortBy(cleanScore, [function(item) { return item.score; }]);
+
+        cleanScore = cleanScore.sort(function (a, b) {
+            if (a.score > b.score) return -1;
+            if (a.score < b.score) return 1;
+            return 0;
+        });
 
         socket.in(self.game._id).emit("roundEnd", {
             "scores"    : cleanScore,
@@ -367,9 +372,6 @@ class GameManagement {
                 DB.get('users').update(findPlayer._id, findPlayer);
             });
 
-            console.log(cleanScore);
-            console.log(rank);
-            console.log(winner);
             socket.in(self.game._id).emit("gameEnd", {scores:cleanScore, rank:rank, winner:winner});
             socket.emit("gameEnd", {scores:cleanScore, rank:rank, winner:winner});
         } else {
