@@ -1,29 +1,58 @@
 $(document).ready(function() {
 
-    var isCreator = true;
-    var defaultTimer = 3;
-    var questionTimer = 5;
-    var timerStyle  = '-webkit-transition: width ' + questionTimer + 's linear; '
+    // SOCKET
+    var gameId = window.location.pathname.split('/')[2];
+    var creator = $('#game-information').data('creator');
+    var username = $('#game-information').data('player');
+    console.log("creator=" + creator);
+    console.log("username=" + username);
+    var socket = io.connect('http://localhost:8737', { query : 'gameId=' + gameId + '&username=' + username });
+
+
+    // DEFAULT VARS
+    const defaultTimer = 3;
+    const questionTimer = 7;
+    const timerStyle  = '-webkit-transition: width ' + questionTimer + 's linear; '
                     + '-moz-transition: width ' + questionTimer + 's linear; '
                     + '-ms-transition: width ' + questionTimer + 's linear; '
                     + '-o-transition: width ' + questionTimer + 's linear; '
                     + 'transition: width ' + questionTimer + 's linear;';
 
-    var isQuestionTime = false;
-    var firstSentence = 'Êtes vous prêt ?<br> Vous avez ' + questionTimer + ' secondes pour répondre à chaque question.';
-    var waitingSentence = 'En attente de connexion des autres joueurs...';
 
-    var questionSample = { label: 'Qu\'est-ce qui est rond et marron ?', nb_question: 1, answers: [{ id : 0, text: 'Un marron !' }, { id : 1, text: 'Euh, un rond marron ?' }, {id : 2, text: 'C\'est pas faux.' }] };
-    var gameSample = { name : 'Ma première game', nb_players : 5, quiz : 'Vais-je avoir mon année ?', nbQuestions: 15, gameId : 'YH25GI78'  };
-    var responseSample = { gagnant: "Clément", place: 2, info: 'En effet vous êtes un gland...'};
-    var playersSample = [{ name: "Léo", pts: 5 }, { name: "Thomas", pts: 3 }, { name: "Steve", pts: 2 }, { name: "Romain", pts: 1 }, { name: "Clément", pts: 0 }];
+    // SENTENCES
+    const firstSentence = 'Êtes vous prêt ?<br> Vous avez ' + questionTimer + ' secondes pour répondre à chaque question.';
+    const waitingSentence = 'En attente de connexion des autres joueurs...';
+    const winnerSentence = 'Et le gagnant est...<br>';
+
+
+    // SAMPLES
+    // var questionSample = { label: 'Qu\'est-ce qui est rond et marron ?', nb_question: 1, answers: [{ id : 0, text: 'Un marron !' }, { id : 1, text: 'Euh, un rond marron ?' }, {id : 2, text: 'C\'est pas faux.' }] };
+    // var gameSample = { name : 'Ma première game', nb_players : 5, quiz : 'Vais-je avoir mon année ?', nbQuestions: 15, gameId : 'YH25GI78'  };
+    // var responseSample = { gagnant: "Clément", place: 2, info: 'En effet vous êtes un gland...'};
+    // var playersSample = [{ name: "Léo", pts: 5 }, { name: "Thomas", pts: 3 }, { name: "Steve", pts: 2 }, { name: "Romain", pts: 1 }, { name: "Clément", pts: 0 }];
+
+
+    // USEFUL VARS
+    var isQuestionTime = false;
+    var nbPlayers = 0;
+
 
     // EVENTS
     $('.answers .ans1 .answer-content').on('click', function() { sendAnswer(1) });
     $('.answers .ans2 .answer-content').on('click', function() { sendAnswer(2) });
     $('.answers .ans3 .answer-content').on('click', function() { sendAnswer(3) });
 
+    $(document).on('keypress', function(e) {
+        var key = (e.which-32);
+        switch(key) {
+            case 49: case 50: case 51: case 52: case 65: case 90: case 69: case 82: case 81: case 83: case 68: case 70: case 87: case 88: case 67: case 86: sendAnswer(1); break;
+            case 53: case 54: case 55: case 56: case 84: case 89: case 85: case 75: case 71: case 72: case 74: case 75: case 66: case 78: case 188: case 190: sendAnswer(2); break;
+            case 57: case 48: case 219: case 187: case 79: case 80: case 221: case 186: case 76: case 77: case 192: case 220: case 191: case 223: case 16: sendAnswer(3); break;
+        }
+    });
+
     $('.question .launch-button').on('click', function() { launchGame() });
+
 
     // INIT
     function init() {
@@ -37,20 +66,14 @@ $(document).ready(function() {
 
         updateNumQuestion('-');
         setNumberOfQuestion('-');
-        // launchTimer(questionTimer, hideTimer);
-        // resetProgress();
-        // setProgress(20);
-        // initScores(playersSample);
-        // initGame();
-        initWaitingRoom();
     }
 
-    function initWaitingRoom() {
-        setNumberOfQuestion(gameSample.nbQuestions);
-        setQuizName(gameSample.quiz);
+    function initWaitingRoom(info) {
+        setNumberOfQuestion(info.numberOfQuestions);
+        setQuizName(info.gameTitle);
 
-        $('.players .scores-title .game-name .editable').html(gameSample.name + '<br><span class="game-id">#' + gameSample.gameId + '</span>');
-        showQuestion('Game #' + gameSample.gameId + '<br>' + waitingSentence);
+        $('.players .scores-title .game-name .editable').html(info.gameTitle + '<br><span class="game-id">#' + gameId + '</span>');
+        showQuestion('Game #' + gameId + '<br>' + waitingSentence);
 
         showLaunchButton();
     }
@@ -61,23 +84,22 @@ $(document).ready(function() {
         $('.players .players-table .player .points .editable').html('0 pt');
     }
 
-    function initGame() {
+    function initGame(obj) {
+        setNbPlayers(obj.nbPlayers);
         hideLaunchButton();
         showQuestion(firstSentence);
-        setNumberOfQuestion(gameSample.nbQuestions);
-        setQuizName(gameSample.quiz);
-        questionCycle(questionSample);
     }
 
 
     // CYCLES FUNCTIONS
     function questionCycle(question) {
-        // TODO passer la question
         hideQuestion();
         hideResponse();
         hideAnswers();
-        updateNbAnswers(gameSample.nb_players);
-        updateNumQuestion(question.nb_question);
+        resetPlayed();
+
+        updateNbAnswers(nbPlayers);
+        updateNumQuestion(question.roundNumber);
         resetProgress();
 
         showLoading();
@@ -87,8 +109,8 @@ $(document).ready(function() {
             isQuestionTime = true;
 
             hideLoading();
-            showQuestion(question.label);
-            showAnswers(question.answers);
+            showQuestion(question.question);
+            showAnswers(question.choices);
             showTimer();
             launchTimer(questionTimer, cb2);
 
@@ -97,17 +119,26 @@ $(document).ready(function() {
 
                 hideTimer();
                 hideAnswers();
-                showResponse(1);
-                showQuestion(responseSample.info);
-                // Run en boucle TODO remove
-                // setTimeout(questionCycle(questionSample), 1000);
             }
         }
     }
 
+    function responseCycle(response) {
+        showResponse(response.goodAnswer);
+        showQuestion(response.answerInfo);
+    }
+
     function scoresCycle(scores) {
-        generateScoreTable(scores);
-        showQuestion(responseSample.gagnant + ' a été le plus rapide... Vous êtes ' + responseSample.place + 'e.');
+        updateScoresTable(scores);
+        // TODO place à chaque round
+        // showQuestion(scores[0] + ' a été le plus rapide... Vous êtes ' + 2 + 'e.');
+    }
+
+    function endGameCycle(obj) {
+        scoresCycle(obj.scores);
+
+        if (obj.winner === username) showQuestion(winnerSentence + 'VOUS !<br> Bravo vous avez écrasé vos adversaires !');
+        else showQuestion(winnerSentence + obj.winner + ' ! Vous êtes tout de même ' + _.find(obj.rank, function(r) { return r.username === username}).position + 'e... ce n\'est pas si mal. Entraînez-vous !');
     }
 
 
@@ -118,14 +149,26 @@ $(document).ready(function() {
     }
 
     function launchGame() {
-      // TODO
-      if (isCreator) {
+      if (isCreator()) {
         console.log("Send Launch game");
-        initGame();
+        socket.emit('launchGame', { username: username });
       }
+
       else console.log("You are not the creator tabarnak !");
     }
 
+    function isCreator() {
+        return creator === username;
+    }
+
+    function updateCreator(username) {
+        creator = username;
+        showLaunchButton();
+    }
+
+    function setNbPlayers(nbp) {
+        nbPlayers = nbp;
+    }
 
     // LOADING CIRCLE FUNCTIONS
     function launchLoading(timer, callback) {
@@ -198,22 +241,36 @@ $(document).ready(function() {
     function showAnswers(answers) {
         hideOrShowElement('.answers .answer', 'show');
         hideOrShowElement('.answers .answer .text.editable', 'show');
-        $('.answers .ans1 .answer-content .editable').html(answers[0].text);
-        $('.answers .ans2 .answer-content .editable').html(answers[1].text);
-        $('.answers .ans3 .answer-content .editable').html(answers[2].text);
+        $('.answer.ans1 .answer-content').attr('style', 'background-color: #2E74B5; opacity: 0.9;');
+        $('.answer.ans2 .answer-content').attr('style', 'background-color: #C45911; opacity: 0.9;');
+        $('.answer.ans3 .answer-content').attr('style', 'background-color: #538135; opacity: 0.9;');
 
-        $('.response.res1 .response-content .editable').html(answers[0].text);
-        $('.response.res2 .response-content .editable').html(answers[1].text);
-        $('.response.res3 .response-content .editable').html(answers[2].text);
+        $('.answers .ans1 .answer-content .editable').html(answers[0]);
+        $('.answers .ans2 .answer-content .editable').html(answers[1]);
+        $('.answers .ans3 .answer-content .editable').html(answers[2]);
+
+        $('.response.res1 .response-content .editable').html(answers[0]);
+        $('.response.res2 .response-content .editable').html(answers[1]);
+        $('.response.res3 .response-content .editable').html(answers[2]);
 
         hideOrShowElement('.answers .nbAnswers .nbaContent', 'show');
     }
 
     function sendAnswer(answerId) {
-        // TODO send answerId to server
         if (isQuestionTime) {
-            console.log('Send answer [id] : ', answerId);
+            var indexOfAnswer = (answerId-1);
+            console.log('Send answer [id] : ', indexOfAnswer);
+            socket.emit('sendAnswer', { myId: username, answerId: indexOfAnswer });
+
+            lockAnswers(answerId);
+            isQuestionTime = false;
         }
+    }
+
+    function lockAnswers(answerId) {
+        console.log('lockAnswers');
+        $('.answers .answer-content').attr('style', 'background-color: grey; opacity: 0.3;');
+        $('.answer.ans' + answerId + ' .answer-content').attr('style', 'background-color: grey; opacity: 1;');
     }
 
     function updateNbAnswers(number) {
@@ -248,6 +305,14 @@ $(document).ready(function() {
         hideOrShowElement('.answers .response', 'hide');
     }
 
+    function resetPlayed() {
+        $('.players .players-table .player .played .editable').html('...');
+    }
+
+    function togglePlayed(name) {
+        $('.players .players-table .player .name .editable:contains("' + name + '")').parent().parent().find('.played .editable').html('PLAYED');
+    }
+
 
     // QUESTIONS FUNCTIONS
     function waitForNextQuestion() {
@@ -277,17 +342,40 @@ $(document).ready(function() {
     function generateScoreTable(players) {
         var playerHtml = '';
 
-        for(var i = 1 ; i <= players.length ; i++) {
-          var p = players[i-1].pts <=1 ? 'pt' : 'pts';
+        for (var i = 1 ; i <= players.length ; i++) {
+          playerHtml +=  '<div class="col s12 player">' +
+                            '<div class="col s2 position">' +
+                              '<span class="editable circle">  -  </span>' +
+                            '</div>' +
+                            '<div class="col s6 name">' +
+                                '<span class="editable">' + players[i-1].username + '</span>' +
+                            '</div>' +
+                            '<div class="col s2 points">' +
+                                '<span class="editable">0 point</span>' +
+                            '</div>' +
+                            '<div class="col s2 played">' +
+                                '<span class="editable">...</span>' +
+                            '</div>' +
+                          '</div>';
+        }
+
+        $('.players .players-table').html(playerHtml);
+    }
+
+    function updateScoresTable(players) {
+        var playerHtml = '';
+
+        for (var i = 1 ; i <= players.length ; i++) {
+          var p = players[i-1].score <= 1 ? 'point' : 'points';
           playerHtml +=  '<div class="col s12 player">' +
                             '<div class="col s2 position">' +
                               '<span class="editable circle">' + i + '</span>' +
                             '</div>' +
                             '<div class="col s6 name">' +
-                                '<span class="editable">' + players[i-1].name + '</span>' +
+                                '<span class="editable">' + players[i-1].username + '</span>' +
                             '</div>' +
                             '<div class="col s2 points">' +
-                                '<span class="editable">' + players[i-1].pts + ' ' + p + '</span>' +
+                                '<span class="editable">' + players[i-1].score + ' ' + p + '</span>' +
                             '</div>' +
                             '<div class="col s2 played">' +
                                 '<span class="editable">...</span>' +
@@ -309,8 +397,65 @@ $(document).ready(function() {
     }
 
     function showLaunchButton() {
-        if (isCreator) hideOrShowElement('.question .launch-button', 'show');
+        if (isCreator()) hideOrShowElement('.question .launch-button', 'show');
     }
 
     init();
+
+
+    // EVENTS RECEIVED
+    // When enter in the room
+    socket.on('gameEnter', function(info) {
+        console.log('gameEnter');
+        initWaitingRoom(info);
+    });
+
+    // When user enters in the game
+    socket.on('userEnterInTheGame', function(res) {
+        console.log('userEnterInTheGame');
+        generateScoreTable(res.users);
+    });
+
+    // When the game start
+    socket.on('gameStart', function(nbPlayers) {
+        console.log('gameStart');
+        initGame(nbPlayers);
+    });
+
+    // When round start
+    socket.on('roundStart', function(round) {
+        console.log('roudStart');
+        questionCycle(round);
+    });
+
+    socket.on('userAnswer', function(user) {
+        console.log('userAnswer');
+        updateNbAnswers(parseInt($('.answers .nbAnswers .editable').text())-1);
+        togglePlayed(user.username);
+    });
+
+    socket.on('roundEnd', function(roundEndInfo) {
+        console.log('roundEnd');
+        scoresCycle(roundEndInfo.scores);
+        responseCycle(roundEndInfo);
+    });
+
+    socket.on('gameEnd', function(gameEndInfo) {
+        console.log('gameEnd');
+        endGameCycle(gameEndInfo);
+    });
+
+    socket.on('newGameMaster', function(username) {
+        updateCreator(username);
+    });
+
+    socket.on('playerLeave', function(res) {
+        console.log('playerLeave');
+        generateScoreTable(res.users);
+    });
+
+    socket.on('error', function(error) {
+        console.log('[ERROR FROM SERVER] ' + error);
+    });
+
 })
