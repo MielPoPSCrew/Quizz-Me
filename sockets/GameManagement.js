@@ -328,7 +328,7 @@ class GameManagement {
                 score : value
             })
         });
-
+        _.sortBy(cleanScore, [function(item) { return item.score; }]);
 
         socket.in(self.game._id).emit("roundEnd", {
             "scores"    : cleanScore,
@@ -345,8 +345,6 @@ class GameManagement {
 
         if ((self.currentRound) >= _.size(self.game.quiz.questions)) {
             console.log('[' + self.game._id+ '] : game end');
-
-            _.sortBy(cleanScore, 'score');
 
             var rank = [];
             var i = 0;

@@ -136,11 +136,10 @@ $(document).ready(function() {
     }
 
     function endGameCycle(obj) {
-        console.log(obj);
         scoresCycle(obj.scores);
 
-        if (obj.winner.username === username) showQuestion(winnerSentence + 'VOUS !<br> Bravo vous avez écrasé vos adversaires !');
-        else showQuestion(winnerSentence + obj.winner.username + ' ! Vous êtes tout de même ' + obj.rank + 'e... ce n\'est pas si mal. Entraînez-vous !');
+        if (obj.winner === username) showQuestion(winnerSentence + 'VOUS !<br> Bravo vous avez écrasé vos adversaires !');
+        else showQuestion(winnerSentence + obj.winner + ' ! Vous êtes tout de même ' + _.find(obj.rank, function(r) { return r.username === username}).position + 'e... ce n\'est pas si mal. Entraînez-vous !');
     }
 
 
@@ -390,7 +389,7 @@ $(document).ready(function() {
     }
 
     function sortScores(scores) {
-        return _.sortBy(scores, 'score');
+        return scores;
     }
 
 
