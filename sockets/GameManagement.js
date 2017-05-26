@@ -15,6 +15,7 @@ class GameManagement {
         this.users        = [];
         this.rounds       = [];
         this.started      = false;
+        this.goodAnswer   = [];
     }
 
     /**
@@ -107,7 +108,7 @@ class GameManagement {
         socket.emit('gameStart', {nbPlayers:_.size(this.users)});
 
         // Start the first round after 5 sec
-        _.delay(this.startRound, 5000, socket, this);
+        _.delay(this.startRound, 5000, socket, this, username);
     }
 
     /**
@@ -135,11 +136,28 @@ class GameManagement {
         if(answer == goodAnswer)
         {
             self.scores[username]++;
-            // Plus rapide
-            if(self.rounds[self.currentRound].length <= 1)
+            var quickest = false;
+
+            if(!self.goodAnswer[self.currentRound])
             {
+                self.goodAnswer[self.currentRound] = true;
                 self.scores[username]++;
+                quickest = true;
             }
+
+            DB.get('users').findOne({username:username}).then(function (findPlayer) {
+                console.log(findPlayer)
+                findPlayer.statistics.goodAnswers++;
+
+                if(quickest)
+                {
+                    findPlayer.statistics.quickAnswers++;
+                }
+
+                console.log(findPlayer)
+
+                DB.get('users').update(findPlayer._id, findPlayer);
+            });
         }
 
         console.log('[' + self.game._id+ '] : received answer from' + username + ' : ' + answer);
@@ -240,14 +258,14 @@ class GameManagement {
      *
      * @return {undefined}
      */
-    startRound (socket, gameManager) {
+    startRound (socket, gameManager, username) {
         const self = gameManager;
 
         //console.log(this);
 
         self.answered = 0;
         self.timer    = new Date();
-        self.timeout  = _.delay(self.endRound, 13000, socket, self);
+        self.timeout  = _.delay(self.endRound, 13000, socket, self, username);
         self.rounds[self.currentRound] = [];
 
         console.log('[' + self.game._id+ '] : starting round ' + (self.currentRound + 1));
@@ -271,7 +289,7 @@ class GameManagement {
      *
      * @return {undefined}
      */
-    endRound (socket, gameManagement) {
+    endRound (socket, gameManagement, username) {
         const self = gameManagement;
         console.log('[' + self.game._id+ '] : ending round ' + (self.currentRound + 1));
 
@@ -302,12 +320,36 @@ class GameManagement {
 
         if ((self.currentRound) >= _.size(self.game.quiz.questions)) {
             console.log('[' + self.game._id+ '] : game end');
-            socket.in(self.game._id).emit("gameEnd", {scores:cleanScore});
+
+            _.sortBy(cleanScore, 'score');
+
+            var rank = [];
+            var i = 0;
+            _.each(cleanScore, function(value) {
+                rank.push({
+                    username: value.username,
+                    position : ++i
+                })
+            });
+
+            var winner = cleanScore[0].username;
+
+            DB.get('users').findOne({username:username}).then(function (findPlayer) {
+                console.log(findPlayer)
+                findPlayer.statistics.gamesTotal++;
+                if(username == winner)
+                    findPlayer.statistics.gamesWon++;
+
+
+                DB.get('users').update(findPlayer._id, findPlayer);
+            });
+
+            socket.in(self.game._id).emit("gameEnd", {scores:cleanScore, rank:rank, winner:winner});
             socket.emit("gameEnd", {scores:cleanScore});
         } else {
             // Start the new round
             console.log('[' + self.game._id+ '] : new round');
-            _.delay(self.startRound, 5000, socket, self);
+            _.delay(self.startRound, 5000, socket, self, username);
         }
     }
 }
