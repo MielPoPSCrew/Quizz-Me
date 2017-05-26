@@ -175,7 +175,9 @@ class GameManagement {
                   throw new Error('User not found on the database');
               }
 
-              if (!_.isUndefined(_.find(self.users, user))) {
+              // console.log(this.users);
+              // console.log(user);
+              if (!_.isUndefined(_.find(this.users, user))) {
                   console.log('[' + this.game._id+ '] : ' + username + ' was already in');
               }
               else {
@@ -211,13 +213,24 @@ class GameManagement {
 
     userLeave (socket, username) {
         const self = this;
-        self.users.pop(username);
-        delete self.scores[username];
+
+        _.remove(this.users, function(un) {
+            return un.username === username;
+        });
+
+        delete this.scores[username];
 
         DB.get('games').findOne({_id: self.game._id}).then( (gameInfo) => {
-            gameInfo.users.pop(username);
+            _.remove(gameInfo.users, function(un) {
+                return un === username;
+            });
+
             DB.get('games').update(self.game._id, gameInfo);
         });
+
+        // console.log(this.scores);
+
+        socket.in(this.game._id).emit('playerLeave', {'users': this.users});
     }
 
     /**
