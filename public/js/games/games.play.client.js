@@ -22,7 +22,7 @@ $(document).ready(function() {
     // SENTENCES
     const firstSentence = 'Êtes vous prêt ?<br> Vous avez ' + questionTimer + ' secondes pour répondre à chaque question.';
     const waitingSentence = 'En attente de connexion des autres joueurs...';
-    const winnerSentence = 'And the winner who winneud is...<br>';
+    const winnerSentence = 'Et le gagnant est...<br>';
 
 
     // SAMPLES
@@ -133,6 +133,14 @@ $(document).ready(function() {
 
         // TODO PLACE AND NB POINTS
         showQuestion(scores[0] + ' a été le plus rapide... Vous êtes ' + 2 + 'e.');
+    }
+
+    function endGameCycle(obj) {
+        console.log(obj);
+        scoresCycle(obj.scores);
+
+        if (obj.winner.username === username) showQuestion(winnerSentence + 'VOUS !<br> Bravo vous avez écrasé vos adversaires !');
+        else showQuestion(winnerSentence + obj.winner.username + ' ! Vous êtes tout de même ' + obj.rank + 'e... ce n\'est pas si mal. Entraînez-vous !');
     }
 
 
@@ -441,8 +449,7 @@ $(document).ready(function() {
 
     socket.on('gameEnd', function(gameEndInfo) {
         console.log('gameEnd');
-        scoresCycle(gameEndInfo.scores);
-        showQuestion(winnerSentence + gameEndInfo.scores[0].username + ' !');
+        endGameCycle(gameEndInfo);
     });
 
     socket.on('newGameMaster', function(username) {

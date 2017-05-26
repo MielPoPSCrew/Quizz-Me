@@ -344,6 +344,9 @@ class GameManagement {
                 DB.get('users').update(findPlayer._id, findPlayer);
             });
 
+            console.log(cleanScore);
+            console.log(rank);
+            console.log(winner);
             socket.in(self.game._id).emit("gameEnd", {scores:cleanScore, rank:rank, winner:winner});
             socket.emit("gameEnd", {scores:cleanScore});
         } else {
