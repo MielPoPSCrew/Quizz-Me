@@ -16,7 +16,7 @@ app.use(cookieParser());
 global.DB = require('monk')('localhost/quizme');
 
 // import default topics if they aren't in database
-let topics = ["Musique", "Cinéma", "Sciences / Technologies", "Litérature", "Culture Générale"];
+let topics = ["Musique", "Cinéma", "Sciences / Technologies", "Littérature", "Culture Générale"];
 topics.forEach( (topic) => {
     DB.get('topics').find({'name': topic}).then( (t) => {
         if(_.isEmpty(t))
