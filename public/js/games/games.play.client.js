@@ -6,7 +6,7 @@ $(document).ready(function() {
     var username = $('#game-information').data('player');
     console.log("creator=" + creator);
     console.log("username=" + username);
-    var socket = io.connect('http://localhost:8737', { query : 'gameId=' + gameId + '&username=' + username });
+    var socket = io.connect('/', { query : 'gameId=' + gameId + '&username=' + username });
 
 
     // DEFAULT VARS
