@@ -96,7 +96,9 @@ class GameManagement {
     launchGame (socket, username) {
 
         if (username !== this.game.creator.username) {
-            throw new Error('Your are not the admin of the game');
+            // TODO
+            console.log('Your are not the admin of the game');
+            return;
         }
 
         console.log('[' + this.game._id+ '] : game begin');
@@ -203,6 +205,7 @@ class GameManagement {
 
               if (!_.isUndefined(_.find(this.users, user))) {
                   console.log('[' + this.game._id+ '] : ' + username + ' was already in');
+                  socket.emit("gameMasterChange", {username:this.game.creator.username, users: this.users});
               }
               else {
 
@@ -232,6 +235,8 @@ class GameManagement {
                   "numberOfQuestions": _.size(self.game.quiz.questions),
                   "gameTitle"        : self.game.name
               });
+
+              socket.emit("gameMasterChange", {username:this.game.creator.username, users: this.users});
           });
     }
 
@@ -267,7 +272,7 @@ class GameManagement {
             this.game.creator = this.users[0];
             console.log('[' + self.game._id+ '] : game master changed =' + this.game.creator.username);
 
-            socket.in(self.game._id).emit("gameMasterChange", {username:this.game.creator.username});
+            socket.in(self.game._id).emit("gameMasterChange", {username:this.game.creator.username, users: this.users});
         }
     }
 
